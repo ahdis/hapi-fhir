@@ -1028,7 +1028,7 @@ public class ResourceProviderR4Test extends BaseResourceProviderR4Test {
 		e1.getStatusElement().setValue(EncounterStatus.INPROGRESS);
 		EncounterLocationComponent location = e1.addLocation();
 		location.getLocation().setReferenceElement(l2id.toUnqualifiedVersionless());
-		location.setPeriod(new Period().setStart(new Date(), TemporalPrecisionEnum.SECOND).setEnd(new Date(), TemporalPrecisionEnum.SECOND));
+		location.setPeriod(new Period().setStart(new Date(), org.hl7.fhir.r4.model.TemporalPrecisionEnum.SECOND).setEnd(new Date(), org.hl7.fhir.r4.model.TemporalPrecisionEnum.SECOND));
 		IIdType e1id = ourClient.create().resource(e1).execute().getId();
 
 		Bundle res = ourClient.search()
@@ -3563,7 +3563,7 @@ public class ResourceProviderR4Test extends BaseResourceProviderR4Test {
 		int sleep = 100;
 		Thread.sleep(sleep);
 
-		DateTimeType beforeAny = new DateTimeType(new Date(), TemporalPrecisionEnum.MILLI);
+		DateTimeType beforeAny = new DateTimeType(new Date(), org.hl7.fhir.r4.model.TemporalPrecisionEnum.MILLI);
 		IIdType id1a;
 		{
 			Patient patient = new Patient();
@@ -3580,7 +3580,7 @@ public class ResourceProviderR4Test extends BaseResourceProviderR4Test {
 		}
 
 		Thread.sleep(1100);
-		DateTimeType beforeR2 = new DateTimeType(new Date(), TemporalPrecisionEnum.MILLI);
+		DateTimeType beforeR2 = new DateTimeType(new Date(), org.hl7.fhir.r4.model.TemporalPrecisionEnum.MILLI);
 		Thread.sleep(1100);
 
 		IIdType id2;

@@ -65,7 +65,11 @@ public class SubscriptionCanonicalizer<S extends IBaseResource> {
 			case DSTU3:
 				return canonicalizeDstu3(theSubscription);
 			case R4:
+			try {
 				return canonicalizeR4(theSubscription);
+			} catch (FHIRException e) {
+				e.printStackTrace();
+			}
 			case DSTU2_HL7ORG:
 			case DSTU2_1:
 			default:
@@ -141,47 +145,43 @@ public class SubscriptionCanonicalizer<S extends IBaseResource> {
 	}
 
 	private @Nonnull
-	Map<String, List<String>> extractExtension(IBaseResource theSubscription) {
-		try {
-			switch (theSubscription.getStructureFhirVersionEnum()) {
-				case DSTU2: {
-					ca.uhn.fhir.model.dstu2.resource.Subscription subscription = (ca.uhn.fhir.model.dstu2.resource.Subscription) theSubscription;
-					return subscription
-						.getChannel()
-						.getUndeclaredExtensions()
-						.stream()
-						.collect(Collectors.groupingBy(t -> t.getUrl(), mapping(t -> t.getValueAsPrimitive().getValueAsString(), toList())));
-				}
-				case DSTU3: {
-					org.hl7.fhir.dstu3.model.Subscription subscription = (org.hl7.fhir.dstu3.model.Subscription) theSubscription;
-					return subscription
-						.getChannel()
-						.getExtension()
-						.stream()
-						.collect(Collectors.groupingBy(t -> t.getUrl(), mapping(t -> t.getValueAsPrimitive().getValueAsString(), toList())));
-				}
-				case R4: {
-					org.hl7.fhir.r4.model.Subscription subscription = (org.hl7.fhir.r4.model.Subscription) theSubscription;
-					return subscription
-						.getChannel()
-						.getExtension()
-						.stream()
-						.collect(Collectors.groupingBy(t -> t.getUrl(), mapping(t -> t.getValueAsPrimitive().getValueAsString(), toList())));
-				}
-				case DSTU2_HL7ORG:
-				case DSTU2_1:
-				default: {
-					ourLog.error("Failed to extract extension from subscription {}", theSubscription.getIdElement().toUnqualified().getValue());
-					break;
-				}
+	Map<String, List<String>> extractExtension(IBaseResource theSubscription) throws FHIRException {
+		switch (theSubscription.getStructureFhirVersionEnum()) {
+			case DSTU2: {
+				ca.uhn.fhir.model.dstu2.resource.Subscription subscription = (ca.uhn.fhir.model.dstu2.resource.Subscription) theSubscription;
+				return subscription
+					.getChannel()
+					.getUndeclaredExtensions()
+					.stream()
+					.collect(Collectors.groupingBy(t -> t.getUrl(), mapping(t -> t.getValueAsPrimitive().getValueAsString(), toList())));
 			}
-		} catch (FHIRException theE) {
-			ourLog.error("Failed to extract extension from subscription {}", theSubscription.getIdElement().toUnqualified().getValue(), theE);
+			case DSTU3: {
+				org.hl7.fhir.dstu3.model.Subscription subscription = (org.hl7.fhir.dstu3.model.Subscription) theSubscription;
+				return subscription
+					.getChannel()
+					.getExtension()
+					.stream()
+					.collect(Collectors.groupingBy(t -> t.getUrl(), mapping(t -> t.getValueAsPrimitive().getValueAsString(), toList())));
+			}
+			case R4: {
+				org.hl7.fhir.r4.model.Subscription subscription = (org.hl7.fhir.r4.model.Subscription) theSubscription;
+				return subscription
+					.getChannel()
+					.getExtension()
+					.stream()
+					.collect(Collectors.groupingBy(t -> t.getUrl(), mapping(t -> t.getValueAsPrimitive().getValueAsString(), toList())));
+			}
+			case DSTU2_HL7ORG:
+			case DSTU2_1:
+			default: {
+				ourLog.error("Failed to extract extension from subscription {}", theSubscription.getIdElement().toUnqualified().getValue());
+				break;
+			}
 		}
 		return Collections.emptyMap();
 	}
 
-	private CanonicalSubscription canonicalizeR4(IBaseResource theSubscription) {
+	private CanonicalSubscription canonicalizeR4(IBaseResource theSubscription) throws FHIRException {
 		org.hl7.fhir.r4.model.Subscription subscription = (org.hl7.fhir.r4.model.Subscription) theSubscription;
 
 		CanonicalSubscription retVal = new CanonicalSubscription();

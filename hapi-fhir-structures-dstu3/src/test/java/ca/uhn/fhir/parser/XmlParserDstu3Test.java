@@ -1,14 +1,35 @@
 package ca.uhn.fhir.parser;
 
-import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.model.api.annotation.Child;
-import ca.uhn.fhir.model.api.annotation.ResourceDef;
-import ca.uhn.fhir.narrative.DefaultThymeleafNarrativeGenerator;
-import ca.uhn.fhir.parser.FooMessageHeaderWithExplicitField.FooMessageSourceComponent;
-import ca.uhn.fhir.parser.IParserErrorHandler.IParseLocation;
-import ca.uhn.fhir.parser.PatientWithCustomCompositeExtension.FooParentExtension;
-import ca.uhn.fhir.util.TestUtil;
-import com.google.common.collect.Sets;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.startsWith;
+import static org.hamcrest.core.IsNot.not;
+import static org.hamcrest.text.StringContainsInOrder.stringContainsInOrder;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.nullable;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.UUID;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -17,23 +38,73 @@ import org.hamcrest.core.StringContains;
 import org.hamcrest.text.StringContainsInOrder;
 import org.hl7.fhir.dstu3.model.Address.AddressUse;
 import org.hl7.fhir.dstu3.model.Address.AddressUseEnumFactory;
-import org.hl7.fhir.dstu3.model.*;
+import org.hl7.fhir.dstu3.model.AllergyIntolerance;
+import org.hl7.fhir.dstu3.model.Annotation;
+import org.hl7.fhir.dstu3.model.Appointment;
+import org.hl7.fhir.dstu3.model.AuditEvent;
+import org.hl7.fhir.dstu3.model.Binary;
+import org.hl7.fhir.dstu3.model.BooleanType;
+import org.hl7.fhir.dstu3.model.Bundle;
 import org.hl7.fhir.dstu3.model.Bundle.BundleEntryComponent;
 import org.hl7.fhir.dstu3.model.Bundle.BundleLinkComponent;
 import org.hl7.fhir.dstu3.model.Bundle.BundleType;
+import org.hl7.fhir.dstu3.model.CodeType;
+import org.hl7.fhir.dstu3.model.CodeableConcept;
+import org.hl7.fhir.dstu3.model.Coding;
+import org.hl7.fhir.dstu3.model.Composition;
+import org.hl7.fhir.dstu3.model.ConceptMap;
+import org.hl7.fhir.dstu3.model.Condition;
 import org.hl7.fhir.dstu3.model.ContactPoint.ContactPointSystem;
+import org.hl7.fhir.dstu3.model.DataElement;
+import org.hl7.fhir.dstu3.model.DateTimeType;
+import org.hl7.fhir.dstu3.model.DateType;
+import org.hl7.fhir.dstu3.model.DiagnosticReport;
 import org.hl7.fhir.dstu3.model.DiagnosticReport.DiagnosticReportStatus;
+import org.hl7.fhir.dstu3.model.DocumentManifest;
+import org.hl7.fhir.dstu3.model.Duration;
+import org.hl7.fhir.dstu3.model.ElementDefinition;
 import org.hl7.fhir.dstu3.model.ElementDefinition.ElementDefinitionBindingComponent;
+import org.hl7.fhir.dstu3.model.Encounter;
+import org.hl7.fhir.dstu3.model.EnumFactory;
 import org.hl7.fhir.dstu3.model.Enumeration;
 import org.hl7.fhir.dstu3.model.Enumerations.AdministrativeGender;
 import org.hl7.fhir.dstu3.model.Enumerations.DocumentReferenceStatus;
+import org.hl7.fhir.dstu3.model.Extension;
+import org.hl7.fhir.dstu3.model.GuidanceResponse;
+import org.hl7.fhir.dstu3.model.HumanName;
 import org.hl7.fhir.dstu3.model.HumanName.NameUse;
+import org.hl7.fhir.dstu3.model.IdType;
+import org.hl7.fhir.dstu3.model.Identifier;
 import org.hl7.fhir.dstu3.model.Identifier.IdentifierUse;
+import org.hl7.fhir.dstu3.model.InstantType;
+import org.hl7.fhir.dstu3.model.Location;
+import org.hl7.fhir.dstu3.model.Medication;
+import org.hl7.fhir.dstu3.model.MedicationRequest;
+import org.hl7.fhir.dstu3.model.MedicationStatement;
+import org.hl7.fhir.dstu3.model.Observation;
 import org.hl7.fhir.dstu3.model.Observation.ObservationRelationshipType;
 import org.hl7.fhir.dstu3.model.Observation.ObservationStatus;
+import org.hl7.fhir.dstu3.model.Organization;
+import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.dstu3.model.Practitioner;
+import org.hl7.fhir.dstu3.model.PrimitiveType;
+import org.hl7.fhir.dstu3.model.ProcedureRequest;
+import org.hl7.fhir.dstu3.model.Quantity;
+import org.hl7.fhir.dstu3.model.Reference;
+import org.hl7.fhir.dstu3.model.Resource;
+import org.hl7.fhir.dstu3.model.SampledData;
+import org.hl7.fhir.dstu3.model.SimpleQuantity;
+import org.hl7.fhir.dstu3.model.StringType;
+import org.hl7.fhir.dstu3.model.UriType;
+import org.hl7.fhir.dstu3.model.ValueSet;
+import org.hl7.fhir.exceptions.FHIRFormatError;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
-import org.junit.*;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.xmlunit.builder.DiffBuilder;
 import org.xmlunit.builder.Input;
@@ -42,20 +113,16 @@ import org.xmlunit.diff.DefaultNodeMatcher;
 import org.xmlunit.diff.Diff;
 import org.xmlunit.diff.ElementSelectors;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import com.google.common.collect.Sets;
 
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.startsWith;
-import static org.hamcrest.core.IsNot.not;
-import static org.hamcrest.text.StringContainsInOrder.stringContainsInOrder;
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.model.api.annotation.Child;
+import ca.uhn.fhir.model.api.annotation.ResourceDef;
+import ca.uhn.fhir.narrative.DefaultThymeleafNarrativeGenerator;
+import ca.uhn.fhir.parser.FooMessageHeaderWithExplicitField.FooMessageSourceComponent;
+import ca.uhn.fhir.parser.IParserErrorHandler.IParseLocation;
+import ca.uhn.fhir.parser.PatientWithCustomCompositeExtension.FooParentExtension;
+import ca.uhn.fhir.util.TestUtil;
 
 public class XmlParserDstu3Test {
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(XmlParserDstu3Test.class);
@@ -839,7 +906,7 @@ public class XmlParserDstu3Test {
 	}
 
 	@Test
-	public void testEncodeAndParseProfiledDatatype() {
+	public void testEncodeAndParseProfiledDatatype() throws FHIRFormatError {
 		MedicationRequest mo = new MedicationRequest();
 		mo.addDosageInstruction().getTiming().getRepeat().setBounds(new Duration().setCode("code"));
 		String out = ourCtx.newXmlParser().encodeResourceToString(mo);
@@ -1073,7 +1140,7 @@ public class XmlParserDstu3Test {
 	 * See #113
 	 */
 	@Test
-	public void testEncodeContainedResources() {
+	public void testEncodeContainedResources() throws FHIRFormatError {
 
 		MedicationRequest medicationPrescript = new MedicationRequest();
 
@@ -1107,7 +1174,7 @@ public class XmlParserDstu3Test {
 	 * See #113
 	 */
 	@Test
-	public void testEncodeContainedResourcesAutomatic() {
+	public void testEncodeContainedResourcesAutomatic()  throws FHIRFormatError {
 
 		MedicationRequest medicationPrescript = new MedicationRequest();
 		String nameDisp = "MedRef";
@@ -1140,7 +1207,7 @@ public class XmlParserDstu3Test {
 	 * See #113
 	 */
 	@Test
-	public void testEncodeContainedResourcesManualContainUsingNonLocalId() {
+	public void testEncodeContainedResourcesManualContainUsingNonLocalId() throws FHIRFormatError  {
 
 		MedicationRequest medicationPrescript = new MedicationRequest();
 
@@ -1611,7 +1678,7 @@ public class XmlParserDstu3Test {
 	}
 
 	@Test
-	public void testEncodeReferenceUsingUnqualifiedResourceWorksCorrectly() {
+	public void testEncodeReferenceUsingUnqualifiedResourceWorksCorrectly()  throws FHIRFormatError  {
 
 		Patient patient = new Patient();
 		patient.setId("phitcc_pat_normal");
@@ -2818,7 +2885,7 @@ public class XmlParserDstu3Test {
 	 * Thanks to Alexander Kley!
 	 */
 	@Test
-	public void testParseContainedBinaryResource() {
+	public void testParseContainedBinaryResource()  throws FHIRFormatError {
 		byte[] bin = new byte[]{0, 1, 2, 3, 4};
 		final Binary binary = new Binary();
 		binary.setContentType("PatientConsent").setContent(bin);
@@ -2935,7 +3002,7 @@ public class XmlParserDstu3Test {
 	}
 
 	@Test
-	public void testParseInvalidTextualNumber() {
+	public void testParseInvalidTextualNumber()  throws FHIRFormatError  {
 		Observation obs = new Observation();
 		obs.setValue(new Quantity().setValue(1234));
 		String encoded = ourCtx.newJsonParser().setPrettyPrint(true).encodeResourceToString(obs);
@@ -3223,7 +3290,7 @@ public class XmlParserDstu3Test {
 	 * See #344
 	 */
 	@Test
-	public void testParserIsCaseSensitive() {
+	public void testParserIsCaseSensitive()  throws FHIRFormatError {
 		Observation obs = new Observation();
 		SampledData data = new SampledData();
 		data.setData("1 2 3");
