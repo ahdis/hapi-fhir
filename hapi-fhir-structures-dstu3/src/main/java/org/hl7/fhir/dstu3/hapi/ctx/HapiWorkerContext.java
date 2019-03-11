@@ -70,9 +70,8 @@ public final class HapiWorkerContext implements IWorkerContext, ValueSetExpander
       vso = getExpander().expand(theSource, theProfile);
     } catch (InvalidRequestException e) {
       throw e;
-    } catch (TerminologyServiceException e) {
-      throw new InvalidRequestException(e.getMessage(), e);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       throw new InternalErrorException(e);
     }
     if (vso.getError() != null) {

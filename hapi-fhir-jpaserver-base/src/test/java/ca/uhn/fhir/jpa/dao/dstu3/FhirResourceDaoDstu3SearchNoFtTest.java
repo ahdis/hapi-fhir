@@ -65,7 +65,7 @@ public class FhirResourceDaoDstu3SearchNoFtTest extends BaseJpaDstu3Test {
 	 * See #441
 	 */
 	@Test
-	public void testChainedMedication() {
+	public void testChainedMedication() throws FHIRFormatError{
 		Medication medication = new Medication();
 		medication.getCode().addCoding().setSystem("SYSTEM").setCode("04823543");
 		IIdType medId = myMedicationDao.create(medication).getId().toUnqualifiedVersionless();
@@ -231,7 +231,7 @@ public class FhirResourceDaoDstu3SearchNoFtTest extends BaseJpaDstu3Test {
 
 	@SuppressWarnings("unused")
 	@Test
-	public void testHasAndHas() {
+	public void testHasAndHas()throws FHIRFormatError {
 		Patient p1 = new Patient();
 		p1.setActive(true);
 		IIdType p1id = myPatientDao.create(p1).getId().toUnqualifiedVersionless();
@@ -757,7 +757,7 @@ public class FhirResourceDaoDstu3SearchNoFtTest extends BaseJpaDstu3Test {
 	}
 
 	@Test
-	public void testSearchCompositeParam() {
+	public void testSearchCompositeParam() throws FHIRFormatError{
 		Observation o1 = new Observation();
 		o1.getCode().addCoding().setSystem("foo").setCode("testSearchCompositeParamN01");
 		o1.setValue(new StringType("testSearchCompositeParamS01"));
@@ -787,7 +787,7 @@ public class FhirResourceDaoDstu3SearchNoFtTest extends BaseJpaDstu3Test {
 	}
 
 	@Test
-	public void testSearchCompositeParamDate() {
+	public void testSearchCompositeParamDate() throws FHIRFormatError {
 		Observation o1 = new Observation();
 		o1.getCode().addCoding().setSystem("foo").setCode("testSearchCompositeParamDateN01");
 		o1.setValue(new Period().setStartElement(new DateTimeType("2001-01-01T11:11:11Z")).setEndElement(new DateTimeType("2001-01-01T12:11:11Z")));
@@ -830,7 +830,7 @@ public class FhirResourceDaoDstu3SearchNoFtTest extends BaseJpaDstu3Test {
 	}
 
 	@Test
-	public void testSearchCompositeParamQuantity() {
+	public void testSearchCompositeParamQuantity() throws FHIRFormatError{
 		//@formatter:off
 		Observation o1 = new Observation();
 		o1.addComponent()
@@ -905,7 +905,7 @@ public class FhirResourceDaoDstu3SearchNoFtTest extends BaseJpaDstu3Test {
 
 
 	@Test
-	public void testSearchDateWrongParam() {
+	public void testSearchDateWrongParam() throws FHIRFormatError{
 		Patient p1 = new Patient();
 		p1.getBirthDateElement().setValueAsString("1980-01-01");
 		String id1 = myPatientDao.create(p1).getId().toUnqualifiedVersionless().getValue();
@@ -1141,7 +1141,7 @@ public class FhirResourceDaoDstu3SearchNoFtTest extends BaseJpaDstu3Test {
 		int sleep = 100;
 		Thread.sleep(sleep);
 
-		DateTimeType beforeAny = new DateTimeType(new Date(), TemporalPrecisionEnum.MILLI);
+		DateTimeType beforeAny = new DateTimeType(new Date());
 		IIdType id1a;
 		{
 			Patient patient = new Patient();
@@ -1158,7 +1158,7 @@ public class FhirResourceDaoDstu3SearchNoFtTest extends BaseJpaDstu3Test {
 		}
 
 		Thread.sleep(1100);
-		DateTimeType beforeR2 = new DateTimeType(new Date(), TemporalPrecisionEnum.MILLI);
+		DateTimeType beforeR2 = new DateTimeType(new Date());
 		Thread.sleep(1100);
 
 		IIdType id2;
@@ -1257,8 +1257,8 @@ public class FhirResourceDaoDstu3SearchNoFtTest extends BaseJpaDstu3Test {
 		SearchParameterMap map;
 		Date startDate = new Date(start);
 		Date endDate = new Date(end);
-		DateTimeType startDateTime = new DateTimeType(startDate, TemporalPrecisionEnum.MILLI);
-		DateTimeType endDateTime = new DateTimeType(endDate, TemporalPrecisionEnum.MILLI);
+		DateTimeType startDateTime = new DateTimeType(startDate);
+		DateTimeType endDateTime = new DateTimeType(endDate);
 
 		map = new SearchParameterMap();
 		map.setLastUpdated(new DateRangeParam(startDateTime, endDateTime));
@@ -1530,7 +1530,7 @@ public class FhirResourceDaoDstu3SearchNoFtTest extends BaseJpaDstu3Test {
 	}
 
 	@Test
-	public void testSearchResourceLinkWithChain() {
+	public void testSearchResourceLinkWithChain() throws FHIRFormatError {
 		Patient patient = new Patient();
 		patient.addIdentifier().setSystem("urn:system").setValue("testSearchResourceLinkWithChainXX");
 		patient.addIdentifier().setSystem("urn:system").setValue("testSearchResourceLinkWithChain01");
@@ -1696,7 +1696,7 @@ public class FhirResourceDaoDstu3SearchNoFtTest extends BaseJpaDstu3Test {
 	}
 
 	@Test
-	public void testSearchResourceLinkWithTextLogicalId() {
+	public void testSearchResourceLinkWithTextLogicalId() throws FHIRFormatError{
 		Patient patient = new Patient();
 		patient.setId("testSearchResourceLinkWithTextLogicalId01");
 		patient.addIdentifier().setSystem("urn:system").setValue("testSearchResourceLinkWithTextLogicalIdXX");
@@ -2186,7 +2186,7 @@ public class FhirResourceDaoDstu3SearchNoFtTest extends BaseJpaDstu3Test {
 	}
 
 	@Test
-	public void testSearchValueQuantity() {
+	public void testSearchValueQuantity() throws FHIRFormatError{
 		String methodName = "testSearchValueQuantity";
 
 		String id1;
@@ -2684,7 +2684,7 @@ public class FhirResourceDaoDstu3SearchNoFtTest extends BaseJpaDstu3Test {
 	}
 
 	@Test
-	public void testSearchWithMissingQuantity() {
+	public void testSearchWithMissingQuantity() throws FHIRFormatError {
 		IIdType notMissing;
 		IIdType missing;
 		{

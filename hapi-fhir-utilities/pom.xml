@@ -20,6 +20,13 @@
 			<artifactId>hapi-fhir-base</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		
+		<dependency>
+			<groupId>ca.uhn.hapi.fhir</groupId>
+			<artifactId>org.hl7.fhir.utilities</artifactId>
+			<version>${fhircore_version}</version>
+		</dependency>
+		
 	
 		<dependency>
 			<groupId>com.google.code.gson</groupId>

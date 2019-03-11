@@ -55,6 +55,7 @@
 
 	<build>
 		<plugins>
+		<!-- FIXME
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
@@ -76,11 +77,11 @@
 									<destFileName>hapi-fhir-cli-jpaserver.war</destFileName>
 								</artifactItem>
 							</artifactItems>
-							<!-- other configurations here -->
 						</configuration>
 					</execution>
 				</executions>
 			</plugin>
+			-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>

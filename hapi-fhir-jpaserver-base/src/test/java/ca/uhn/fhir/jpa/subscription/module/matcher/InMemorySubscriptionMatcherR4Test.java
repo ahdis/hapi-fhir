@@ -9,6 +9,7 @@ import ca.uhn.fhir.jpa.subscription.module.ResourceModifiedMessage;
 import ca.uhn.fhir.model.api.TemporalPrecisionEnum;
 import ca.uhn.fhir.rest.param.*;
 import org.apache.commons.lang3.StringUtils;
+import org.hl7.fhir.exceptions.FHIRException;
 import org.hl7.fhir.instance.model.api.IAnyResource;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
@@ -202,7 +203,7 @@ public class InMemorySubscriptionMatcherR4Test {
 	@Test
 	public void testSearchLastUpdatedParamUnsupported() {
 		String methodName = "testSearchLastUpdatedParam";
-		DateTimeType today = new DateTimeType(new Date(), TemporalPrecisionEnum.DAY);
+		DateTimeType today = new DateTimeType(new Date(), org.hl7.fhir.r4.model.TemporalPrecisionEnum.DAY);
 		Patient patient = new Patient();
 		patient.addIdentifier().setSystem("urn:system").setValue("001");
 		patient.addName().setFamily(methodName).addGiven("Joe");
@@ -883,7 +884,12 @@ public class InMemorySubscriptionMatcherR4Test {
 			assertNotMatched(obs, map);
 		}
 		for (Observation obs : ylist) {
-			ourLog.info("Obs {} has time {}", obs.getId(), obs.getEffectiveDateTimeType().getValue().toString());
+			try {
+				ourLog.info("Obs {} has time {}", obs.getId(), obs.getEffectiveDateTimeType().getValue().toString());
+			} catch (FHIRException e) {
+				e.printStackTrace();
+				assertTrue(false);
+			}
 			assertMatched(obs, map);
 		}
 	}

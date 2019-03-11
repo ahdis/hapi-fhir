@@ -5,6 +5,7 @@ import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.util.TestUtil;
 import org.hl7.fhir.dstu3.utils.FhirPathEngineTest;
 import org.hl7.fhir.exceptions.FHIRException;
+import org.hl7.fhir.exceptions.FHIRFormatError;
 import org.hl7.fhir.r4.hapi.ctx.DefaultProfileValidationSupport;
 import org.hl7.fhir.r4.hapi.ctx.HapiWorkerContext;
 import org.hl7.fhir.r4.model.*;
@@ -60,9 +61,14 @@ public class FhirPathEngineR4Test {
 			.setCode(new CodeableConcept().addCoding(new Coding().setSystem("http://foo").setCode("code2")))
 			.setValue(new Quantity().setSystem("http://bar").setCode("code2").setValue(200));
 
-		List<Base> outcme = ourEngine.evaluate(o1, path);
-		assertEquals(2, outcme.size());
-
+		List<Base> outcme;
+		try {
+			outcme = ourEngine.evaluate(o1, path);
+			assertEquals(2, outcme.size());
+		} catch (FHIRException e) {
+			assertTrue(false);
+		}
+	
 	}
 
 

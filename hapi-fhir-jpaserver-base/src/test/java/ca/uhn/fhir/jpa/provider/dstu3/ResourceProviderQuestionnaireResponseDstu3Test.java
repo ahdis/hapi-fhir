@@ -14,6 +14,7 @@ import org.apache.http.entity.StringEntity;
 import org.hl7.fhir.dstu3.model.*;
 import org.hl7.fhir.dstu3.model.Questionnaire.QuestionnaireItemType;
 import org.hl7.fhir.dstu3.model.QuestionnaireResponse.QuestionnaireResponseStatus;
+import org.hl7.fhir.exceptions.FHIRFormatError;
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.junit.*;
 
@@ -58,7 +59,7 @@ public class ResourceProviderQuestionnaireResponseDstu3Test extends BaseResource
 	
 	@SuppressWarnings("unused")
 	@Test
-	public void testCreateWithLocalReference() {
+	public void testCreateWithLocalReference() throws FHIRFormatError {
 		Patient pt1 = new Patient();
 		pt1.addName().setFamily("Everything").addGiven("Arthur");
 		IIdType ptId1 = myPatientDao.create(pt1, mySrd).getId().toUnqualifiedVersionless();
@@ -82,7 +83,7 @@ public class ResourceProviderQuestionnaireResponseDstu3Test extends BaseResource
 	@SuppressWarnings("unused")
 	@Test
 	@Ignore
-	public void testCreateWithAbsoluteReference() {
+	public void testCreateWithAbsoluteReference() throws FHIRFormatError {
 		Patient pt1 = new Patient();
 		pt1.addName().setFamily("Everything").addGiven("Arthur");
 		IIdType ptId1 = myPatientDao.create(pt1, mySrd).getId().toUnqualifiedVersionless();

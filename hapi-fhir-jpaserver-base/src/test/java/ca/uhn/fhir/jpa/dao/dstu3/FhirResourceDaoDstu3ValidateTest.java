@@ -13,7 +13,18 @@ import org.apache.commons.io.IOUtils;
 import org.hl7.fhir.dstu3.hapi.validation.FhirInstanceValidator;
 import org.hl7.fhir.dstu3.model.*;
 import org.hl7.fhir.dstu3.model.Bundle.BundleEntryComponent;
+import org.hl7.fhir.dstu3.model.IdType;
+import org.hl7.fhir.dstu3.model.Observation;
 import org.hl7.fhir.dstu3.model.Observation.ObservationStatus;
+import org.hl7.fhir.dstu3.model.OperationOutcome;
+import org.hl7.fhir.dstu3.model.Organization;
+import org.hl7.fhir.dstu3.model.Patient;
+import org.hl7.fhir.dstu3.model.Questionnaire;
+import org.hl7.fhir.dstu3.model.QuestionnaireResponse;
+import org.hl7.fhir.dstu3.model.StringType;
+import org.hl7.fhir.dstu3.model.StructureDefinition;
+import org.hl7.fhir.dstu3.model.ValueSet;
+import org.hl7.fhir.exceptions.FHIRFormatError;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.hl7.fhir.r4.utils.IResourceValidator;
@@ -24,8 +35,14 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.util.AopTestUtils;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import ca.uhn.fhir.jpa.util.TestUtil;
+import ca.uhn.fhir.rest.api.EncodingEnum;
+import ca.uhn.fhir.rest.api.MethodOutcome;
+import ca.uhn.fhir.rest.api.ValidationModeEnum;
+import ca.uhn.fhir.rest.server.exceptions.PreconditionFailedException;
+import ca.uhn.fhir.rest.server.exceptions.ResourceVersionConflictException;
+import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
+import ca.uhn.fhir.util.StopWatch;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertThat;
@@ -37,7 +54,7 @@ public class FhirResourceDaoDstu3ValidateTest extends BaseJpaDstu3Test {
 	private IValidatorModule myValidatorModule;
 
 	@Test
-	public void testValidateChangedQuestionnaire() {
+	public void testValidateChangedQuestionnaire() throws FHIRFormatError {
 		Questionnaire q = new Questionnaire();
 		q.setId("QUEST");
 		q.addItem().setLinkId("A").setType(Questionnaire.QuestionnaireItemType.STRING).setRequired(true);

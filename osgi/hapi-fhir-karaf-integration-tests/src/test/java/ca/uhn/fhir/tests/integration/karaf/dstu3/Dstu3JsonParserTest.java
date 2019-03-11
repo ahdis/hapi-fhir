@@ -1,5 +1,26 @@
 package ca.uhn.fhir.tests.integration.karaf.dstu3;
 
+import static ca.uhn.fhir.tests.integration.karaf.PaxExamOptions.HAPI_FHIR_DSTU3;
+import static ca.uhn.fhir.tests.integration.karaf.PaxExamOptions.KARAF;
+import static ca.uhn.fhir.tests.integration.karaf.PaxExamOptions.WRAP;
+import static org.apache.commons.lang3.StringUtils.countMatches;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
+import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.CoreOptions.when;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.debugConfiguration;
+import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.logLevel;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.math.BigDecimal;
@@ -8,12 +29,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
-import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.parser.DataFormatException;
-import ca.uhn.fhir.parser.IParser;
-import ca.uhn.fhir.parser.LenientErrorHandler;
-import ca.uhn.fhir.parser.StrictErrorHandler;
-import com.google.common.collect.Sets;
+
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.hl7.fhir.dstu3.model.AuditEvent;
@@ -47,6 +63,7 @@ import org.hl7.fhir.dstu3.model.SimpleQuantity;
 import org.hl7.fhir.dstu3.model.StringType;
 import org.hl7.fhir.dstu3.model.UriType;
 import org.hl7.fhir.dstu3.model.ValueSet;
+import org.hl7.fhir.exceptions.FHIRFormatError;
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.junit.Assert;
 import org.junit.Test;
@@ -58,26 +75,13 @@ import org.ops4j.pax.exam.karaf.options.LogLevelOption;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerClass;
 
-import static ca.uhn.fhir.tests.integration.karaf.PaxExamOptions.HAPI_FHIR_DSTU3;
-import static ca.uhn.fhir.tests.integration.karaf.PaxExamOptions.KARAF;
-import static ca.uhn.fhir.tests.integration.karaf.PaxExamOptions.WRAP;
-import static org.apache.commons.lang3.StringUtils.countMatches;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
-import static org.ops4j.pax.exam.CoreOptions.options;
-import static org.ops4j.pax.exam.CoreOptions.when;
-import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.debugConfiguration;
-import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.logLevel;
+import com.google.common.collect.Sets;
+
+import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.parser.DataFormatException;
+import ca.uhn.fhir.parser.IParser;
+import ca.uhn.fhir.parser.LenientErrorHandler;
+import ca.uhn.fhir.parser.StrictErrorHandler;
 
 
 /**
@@ -1196,7 +1200,7 @@ public class Dstu3JsonParserTest {
 	}
 
 	@Test
-	public void testExponentDoesntGetEncodedAsSuch() {
+	public void testExponentDoesntGetEncodedAsSuch() throws FHIRFormatError {
 		Observation obs = new Observation();
 		obs.setValue(new Quantity().setValue(new BigDecimal("0.000000000000000100")));
 
@@ -1671,7 +1675,7 @@ public class Dstu3JsonParserTest {
 	 * See #344
 	 */
 	@Test
-	public void testParserIsCaseSensitive() {
+	public void testParserIsCaseSensitive() throws FHIRFormatError {
 		Observation obs = new Observation();
 		SampledData data = new SampledData();
 		data.setData("1 2 3");
