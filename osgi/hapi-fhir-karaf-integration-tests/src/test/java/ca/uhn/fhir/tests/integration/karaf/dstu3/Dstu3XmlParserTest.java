@@ -74,6 +74,7 @@ import org.hl7.fhir.dstu3.model.SimpleQuantity;
 import org.hl7.fhir.dstu3.model.StringType;
 import org.hl7.fhir.dstu3.model.UriType;
 import org.hl7.fhir.dstu3.model.ValueSet;
+import org.hl7.fhir.exceptions.FHIRFormatError;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.junit.Assert;
@@ -906,7 +907,7 @@ public class Dstu3XmlParserTest {
 	}
 
 	@Test
-	public void testEncodeAndParseProfiledDatatype() {
+	public void testEncodeAndParseProfiledDatatype() throws FHIRFormatError {
 		MedicationRequest mo = new MedicationRequest();
 		mo.addDosageInstruction().getTiming().getRepeat().setBounds(new Duration().setCode("code"));
 		String out = ourCtx.newXmlParser().encodeResourceToString(mo);
@@ -1140,7 +1141,7 @@ public class Dstu3XmlParserTest {
 	 * See #113
 	 */
 	@Test
-	public void testEncodeContainedResources() {
+	public void testEncodeContainedResources() throws FHIRFormatError {
 
 		MedicationRequest medicationPrescript = new MedicationRequest();
 
@@ -1174,7 +1175,7 @@ public class Dstu3XmlParserTest {
 	 * See #113
 	 */
 	@Test
-	public void testEncodeContainedResourcesAutomatic() {
+	public void testEncodeContainedResourcesAutomatic() throws FHIRFormatError {
 
 		MedicationRequest medicationPrescript = new MedicationRequest();
 		String nameDisp = "MedRef";
@@ -1207,7 +1208,7 @@ public class Dstu3XmlParserTest {
 	 * See #113
 	 */
 	@Test
-	public void testEncodeContainedResourcesManualContainUsingNonLocalId() {
+	public void testEncodeContainedResourcesManualContainUsingNonLocalId() throws FHIRFormatError {
 
 		MedicationRequest medicationPrescript = new MedicationRequest();
 
@@ -1678,7 +1679,7 @@ public class Dstu3XmlParserTest {
 	}
 
 	@Test
-	public void testEncodeReferenceUsingUnqualifiedResourceWorksCorrectly() {
+	public void testEncodeReferenceUsingUnqualifiedResourceWorksCorrectly() throws FHIRFormatError  {
 
 		Patient patient = new Patient();
 		patient.setId("phitcc_pat_normal");
@@ -2763,7 +2764,7 @@ public class Dstu3XmlParserTest {
 	 * Thanks to Alexander Kley!
 	 */
 	@Test
-	public void testParseContainedBinaryResource() {
+	public void testParseContainedBinaryResource() throws FHIRFormatError  {
 		byte[] bin = new byte[]{0, 1, 2, 3, 4};
 		final Binary binary = new Binary();
 		binary.setContentType("PatientConsent").setContent(bin);
@@ -2880,7 +2881,7 @@ public class Dstu3XmlParserTest {
 	}
 
 	@Test
-	public void testParseInvalidTextualNumber() {
+	public void testParseInvalidTextualNumber() throws FHIRFormatError {
 		Observation obs = new Observation();
 		obs.setValue(new Quantity().setValue(1234));
 		String encoded = ourCtx.newJsonParser().setPrettyPrint(true).encodeResourceToString(obs);
@@ -3120,7 +3121,7 @@ public class Dstu3XmlParserTest {
 	 * See #344
 	 */
 	@Test
-	public void testParserIsCaseSensitive() {
+	public void testParserIsCaseSensitive() throws FHIRFormatError {
 		Observation obs = new Observation();
 		SampledData data = new SampledData();
 		data.setData("1 2 3");

@@ -17,8 +17,8 @@ public class ConverterExamples {
 		input.setEncounter(new org.hl7.fhir.instance.model.Reference("Encounter/123"));
 		
 		// Convert the resource
-		org.hl7.fhir.dstu3.model.Observation output = converter.convertObservation(input);
-		String context = output.getContext().getReference();
+//		org.hl7.fhir.dstu3.model.Observation output = converter.convertObservation(input);
+//		String context = output.getContext().getReference();
 	//END SNIPPET: 1020
 	}
 	

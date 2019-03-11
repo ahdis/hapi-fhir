@@ -30,7 +30,6 @@
 			<artifactId>hapi-fhir-converter</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>com.github.ben-manes.caffeine</groupId>
 			<artifactId>caffeine</artifactId>
@@ -58,8 +57,7 @@
 		-->
 		
 		<!--
-		Optional dependencies on the various versions of FHIR
-		-->
+		Optional dependencies on the various versions of FHIR-->
 		<dependency>
 			<groupId>ca.uhn.hapi.fhir</groupId>
 			<artifactId>hapi-fhir-structures-dstu2</artifactId>
@@ -108,7 +106,13 @@
 			<version>${project.version}</version>
 			<optional>true</optional>
 		</dependency>
-		
+  	<dependency>
+			<groupId>ca.uhn.hapi.fhir</groupId>
+			<artifactId>org.hl7.fhir.validation</artifactId>
+			<version>${fhircore_version}</version>
+		</dependency>
+
+				
 		<!-- Test Deps -->
       <dependency>
          <groupId>org.codehaus.woodstox</groupId>

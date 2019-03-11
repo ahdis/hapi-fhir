@@ -13179,7 +13179,7 @@ public org.hl7.fhir.instance.model.ValueSet.ConceptDefinitionDesignationComponen
     return tgt;
   }
 
-  private org.hl7.fhir.instance.model.Specimen convertSpecimen(Specimen src) {
+  private org.hl7.fhir.instance.model.Specimen convertSpecimen(Specimen src) throws FHIRException {
     if (src == null) {
       return null;
     }

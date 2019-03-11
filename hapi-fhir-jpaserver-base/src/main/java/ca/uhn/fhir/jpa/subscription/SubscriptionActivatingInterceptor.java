@@ -41,6 +41,8 @@ import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
 import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 import ca.uhn.fhir.util.SubscriptionUtil;
 import com.google.common.annotations.VisibleForTesting;
+
+import org.hl7.fhir.exceptions.FHIRException;
 import org.hl7.fhir.instance.model.Subscription;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IPrimitiveType;
@@ -101,7 +103,12 @@ public class SubscriptionActivatingInterceptor {
 			.getSingleValueOrNull(theSubscription, SubscriptionConstants.SUBSCRIPTION_TYPE, IPrimitiveType.class)
 			.getValueAsString();
 
-		Subscription.SubscriptionChannelType subscriptionChannelType = Subscription.SubscriptionChannelType.fromCode(subscriptionChannelTypeCode);
+		Subscription.SubscriptionChannelType subscriptionChannelType = null;
+		try {
+			subscriptionChannelType = Subscription.SubscriptionChannelType.fromCode(subscriptionChannelTypeCode);
+		} catch (FHIRException e1) {
+			ourLog.error("Failed to get subscriptionType from Code", subscriptionChannelTypeCode);
+		}
 		// Only activate supported subscriptions
 		if (!myDaoConfig.getSupportedSubscriptionTypes().contains(subscriptionChannelType)) {
 			return false;

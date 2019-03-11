@@ -28,6 +28,7 @@ import org.hl7.fhir.dstu3.model.Quantity;
 import org.hl7.fhir.dstu3.model.Reference;
 import org.hl7.fhir.dstu3.model.SimpleQuantity;
 import org.hl7.fhir.dstu3.model.StringType;
+import org.hl7.fhir.exceptions.FHIRFormatError;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -168,7 +169,7 @@ public class DefaultThymeleafNarrativeGeneratorDstu3Test {
 
 
 	@Test
-	public void testGenerateDiagnosticReportWithObservations() throws DataFormatException {
+	public void testGenerateDiagnosticReportWithObservations() throws FHIRFormatError, DataFormatException {
 		DiagnosticReport value = new DiagnosticReport();
 
 		value.getIssuedElement().setValueAsString("2011-02-22T11:13:00");
@@ -207,7 +208,7 @@ public class DefaultThymeleafNarrativeGeneratorDstu3Test {
 
 	@Test
 	@Ignore
-	public void testGenerateMedicationPrescription() {
+	public void testGenerateMedicationPrescription()  throws FHIRFormatError  {
 		MedicationRequest mp = new MedicationRequest();
 		mp.setId("12345");
 		Medication med = new Medication();
