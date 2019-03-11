@@ -1,5 +1,65 @@
 package org.hl7.fhir.dstu3.hapi.validation;
 
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hl7.fhir.dstu3.model.Questionnaire.QuestionnaireItemType.BOOLEAN;
+import static org.hl7.fhir.dstu3.model.Questionnaire.QuestionnaireItemType.CHOICE;
+import static org.hl7.fhir.dstu3.model.QuestionnaireResponse.QuestionnaireResponseStatus.COMPLETED;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import org.hamcrest.Matchers;
+import org.hl7.fhir.dstu3.hapi.ctx.DefaultProfileValidationSupport;
+import org.hl7.fhir.dstu3.hapi.ctx.IValidationSupport;
+import org.hl7.fhir.dstu3.hapi.ctx.IValidationSupport.CodeValidationResult;
+import org.hl7.fhir.dstu3.model.Attachment;
+import org.hl7.fhir.dstu3.model.BooleanType;
+import org.hl7.fhir.dstu3.model.CodeSystem;
+import org.hl7.fhir.dstu3.model.CodeSystem.CodeSystemContentMode;
+import org.hl7.fhir.dstu3.model.CodeSystem.ConceptDefinitionComponent;
+import org.hl7.fhir.dstu3.model.CodeType;
+import org.hl7.fhir.dstu3.model.Coding;
+import org.hl7.fhir.dstu3.model.DateTimeType;
+import org.hl7.fhir.dstu3.model.DateType;
+import org.hl7.fhir.dstu3.model.DecimalType;
+import org.hl7.fhir.dstu3.model.IdType;
+import org.hl7.fhir.dstu3.model.IntegerType;
+import org.hl7.fhir.dstu3.model.MarkdownType;
+import org.hl7.fhir.dstu3.model.Quantity;
+import org.hl7.fhir.dstu3.model.Questionnaire;
+import org.hl7.fhir.dstu3.model.Questionnaire.QuestionnaireItemComponent;
+import org.hl7.fhir.dstu3.model.Questionnaire.QuestionnaireItemEnableWhenComponent;
+import org.hl7.fhir.dstu3.model.Questionnaire.QuestionnaireItemOptionComponent;
+import org.hl7.fhir.dstu3.model.Questionnaire.QuestionnaireItemType;
+import org.hl7.fhir.dstu3.model.QuestionnaireResponse;
+import org.hl7.fhir.dstu3.model.QuestionnaireResponse.QuestionnaireResponseItemAnswerComponent;
+import org.hl7.fhir.dstu3.model.QuestionnaireResponse.QuestionnaireResponseItemComponent;
+import org.hl7.fhir.dstu3.model.QuestionnaireResponse.QuestionnaireResponseStatus;
+import org.hl7.fhir.dstu3.model.Reference;
+import org.hl7.fhir.dstu3.model.StringType;
+import org.hl7.fhir.dstu3.model.TimeType;
+import org.hl7.fhir.dstu3.model.Type;
+import org.hl7.fhir.dstu3.model.UriType;
+import org.hl7.fhir.dstu3.model.ValueSet;
+import org.hl7.fhir.exceptions.FHIRFormatError;
+import org.hl7.fhir.utilities.validation.ValidationMessage;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.util.TestUtil;
@@ -7,44 +67,6 @@ import ca.uhn.fhir.validation.FhirValidator;
 import ca.uhn.fhir.validation.ResultSeverityEnum;
 import ca.uhn.fhir.validation.SingleValidationMessage;
 import ca.uhn.fhir.validation.ValidationResult;
-
-import org.hamcrest.Matchers;
-import org.hl7.fhir.dstu3.hapi.ctx.DefaultProfileValidationSupport;
-import org.hl7.fhir.dstu3.hapi.ctx.IValidationSupport;
-import org.hl7.fhir.dstu3.hapi.ctx.IValidationSupport.CodeValidationResult;
-import org.hl7.fhir.dstu3.model.*;
-import org.hl7.fhir.dstu3.model.CodeSystem.CodeSystemContentMode;
-import org.hl7.fhir.dstu3.model.CodeSystem.ConceptDefinitionComponent;
-import org.hl7.fhir.dstu3.model.Questionnaire.QuestionnaireItemComponent;
-import org.hl7.fhir.dstu3.model.Questionnaire.QuestionnaireItemEnableWhenComponent;
-import org.hl7.fhir.dstu3.model.Questionnaire.QuestionnaireItemOptionComponent;
-import org.hl7.fhir.dstu3.model.Questionnaire.QuestionnaireItemType;
-import org.hl7.fhir.dstu3.model.QuestionnaireResponse.QuestionnaireResponseItemAnswerComponent;
-import org.hl7.fhir.dstu3.model.QuestionnaireResponse.QuestionnaireResponseItemComponent;
-import org.hl7.fhir.dstu3.model.QuestionnaireResponse.QuestionnaireResponseStatus;
-import org.hl7.fhir.utilities.validation.ValidationMessage;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hl7.fhir.dstu3.model.Questionnaire.QuestionnaireItemType.BOOLEAN;
-import static org.hl7.fhir.dstu3.model.Questionnaire.QuestionnaireItemType.CHOICE;
-import static org.hl7.fhir.dstu3.model.QuestionnaireResponse.QuestionnaireResponseStatus.COMPLETED;
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.when;
 
 public class QuestionnaireResponseValidatorDstu3Test {
 	private static final String QUESTIONNAIRE_URL = "http://example.com/Questionnaire/q1";
@@ -92,7 +114,7 @@ public class QuestionnaireResponseValidatorDstu3Test {
 	}
 
 	@Test
-	public void testAnswerWithCorrectType() {
+	public void testAnswerWithCorrectType() throws FHIRFormatError {
 		CodeSystem codeSystem = new CodeSystem();
 		codeSystem.setContent(CodeSystemContentMode.COMPLETE);
 		codeSystem.setUrl("http://codesystems.com/system");
@@ -172,7 +194,7 @@ public class QuestionnaireResponseValidatorDstu3Test {
 	}
 
 	@Test
-	public void testAnswerWithWrongType() {
+	public void testAnswerWithWrongType() throws FHIRFormatError {
 		Questionnaire q = new Questionnaire();
 		q.addItem().setLinkId("link0").setRequired(true).setType(QuestionnaireItemType.BOOLEAN);
 
@@ -190,7 +212,7 @@ public class QuestionnaireResponseValidatorDstu3Test {
 	}
 
 	@Test
-	public void testCodedAnswer() {
+	public void testCodedAnswer() throws FHIRFormatError {
 		String questionnaireRef = QUESTIONNAIRE_URL;
 
 		Questionnaire q = new Questionnaire();
@@ -259,7 +281,7 @@ public class QuestionnaireResponseValidatorDstu3Test {
 	}
 
 	@Test
-	public void testGroupWithNoLinkIdInQuestionnaireResponse() {
+	public void testGroupWithNoLinkIdInQuestionnaireResponse() throws FHIRFormatError {
 		Questionnaire q = new Questionnaire();
 		QuestionnaireItemComponent qGroup = q.addItem().setType(QuestionnaireItemType.GROUP);
 		qGroup.addItem().setLinkId("link0").setRequired(true).setType(QuestionnaireItemType.BOOLEAN);
@@ -315,7 +337,7 @@ public class QuestionnaireResponseValidatorDstu3Test {
 	}
 
 	@Test
-	public void testItemWithNoType() {
+	public void testItemWithNoType() throws FHIRFormatError{
 		Questionnaire q = new Questionnaire();
 		QuestionnaireItemComponent qGroup = q.addItem();
 		qGroup.setLinkId("link0");
@@ -336,7 +358,7 @@ public class QuestionnaireResponseValidatorDstu3Test {
 	}
 
 	@Test
-	public void testMissingRequiredQuestion() {
+	public void testMissingRequiredQuestion() throws FHIRFormatError{
 
 		Questionnaire q = new Questionnaire();
 		q.addItem().setLinkId("link0").setRequired(true).setType(QuestionnaireItemType.STRING);
@@ -376,7 +398,7 @@ public class QuestionnaireResponseValidatorDstu3Test {
 	}
 	
 	@Test
-	public void testRequiredQuestionQuantityWithEnableWhenHidesQuestionHasAnswerTrue() {
+	public void testRequiredQuestionQuantityWithEnableWhenHidesQuestionHasAnswerTrue() throws FHIRFormatError {
 
 		Questionnaire q = new Questionnaire();
 		q.addItem().setLinkId("link0").setRequired(false).setType(QuestionnaireItemType.QUANTITY);
@@ -404,7 +426,7 @@ public class QuestionnaireResponseValidatorDstu3Test {
 	}
 	
 	@Test
-	public void testRequiredQuestionQuantityWithEnableWhenHidesQuestionValue() {
+	public void testRequiredQuestionQuantityWithEnableWhenHidesQuestionValue() throws FHIRFormatError {
 
 		Questionnaire q = new Questionnaire();
 		q.addItem().setLinkId("link0").setRequired(false).setType(QuestionnaireItemType.QUANTITY);
@@ -432,7 +454,7 @@ public class QuestionnaireResponseValidatorDstu3Test {
 	}
 	
 	@Test
-	public void testRequiredQuestionQuantityWithEnableWhenEnablesQuestionValue() {
+	public void testRequiredQuestionQuantityWithEnableWhenEnablesQuestionValue() throws FHIRFormatError {
 
 		Questionnaire q = new Questionnaire();
 		q.addItem().setLinkId("link0").setRequired(false).setType(QuestionnaireItemType.QUANTITY);
@@ -460,7 +482,7 @@ public class QuestionnaireResponseValidatorDstu3Test {
 	}
 	
 	@Test
-	public void testRequiredQuestionWithEnableWhenHasAnswerTrueWithAnswer() {
+	public void testRequiredQuestionWithEnableWhenHasAnswerTrueWithAnswer() throws FHIRFormatError {
 
 		Questionnaire q = new Questionnaire();
 		q.addItem().setLinkId("link0").setRequired(true).setType(QuestionnaireItemType.STRING);
@@ -490,7 +512,7 @@ public class QuestionnaireResponseValidatorDstu3Test {
 	
 	
 	@Test
-	public void testRequiredQuestionWithEnableWheHidesRequiredQuestionnHasAnswerFalse() {
+	public void testRequiredQuestionWithEnableWheHidesRequiredQuestionnHasAnswerFalse() throws FHIRFormatError {
 
 		Questionnaire q = new Questionnaire();
 		q.addItem().setLinkId("link0").setRequired(false).setType(QuestionnaireItemType.STRING);
@@ -767,7 +789,7 @@ public class QuestionnaireResponseValidatorDstu3Test {
 	}
 
 	@Test
-	public void testValidateQuestionnaireResponseWithValueSetChoiceAnswer() {
+	public void testValidateQuestionnaireResponseWithValueSetChoiceAnswer() throws FHIRFormatError {
 		/*
 		 * Create valueset
 		 */
@@ -854,7 +876,7 @@ public class QuestionnaireResponseValidatorDstu3Test {
 	}
 
 	@Test
-	public void testOpenchoiceAnswer() {
+	public void testOpenchoiceAnswer() throws FHIRFormatError {
 		String questionnaireRef = QUESTIONNAIRE_URL;
 
 		Questionnaire q = new Questionnaire();
@@ -979,7 +1001,7 @@ public class QuestionnaireResponseValidatorDstu3Test {
 	}
 
 	@Test
-	public void testUnexpectedAnswer() {
+	public void testUnexpectedAnswer() throws FHIRFormatError {
 		Questionnaire q = new Questionnaire();
 		q.addItem().setLinkId("link0").setRequired(false).setType(QuestionnaireItemType.BOOLEAN);
 
