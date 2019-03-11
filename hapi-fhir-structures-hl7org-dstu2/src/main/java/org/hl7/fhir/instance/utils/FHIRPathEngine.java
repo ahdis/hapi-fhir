@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+
+import org.fhir.ucum.Decimal;
+import org.fhir.ucum.UcumException;
 import org.hl7.fhir.instance.model.Base;
 import org.hl7.fhir.instance.model.BooleanType;
 import org.hl7.fhir.instance.model.DateTimeType;
@@ -35,9 +38,7 @@ import org.hl7.fhir.instance.utils.FHIRLexer.FHIRLexerException;
 import org.hl7.fhir.instance.utils.FHIRPathEngine.IEvaluationContext.FunctionDetails;
 import org.hl7.fhir.exceptions.DefinitionException;
 import org.hl7.fhir.exceptions.PathEngineException;
-import org.hl7.fhir.exceptions.UcumException;
 import org.hl7.fhir.utilities.Utilities;
-import org.hl7.fhir.utilities.ucum.Decimal;
 
 
 /**

@@ -152,7 +152,11 @@ public class TransactionProcessorVersionAdapterDstu3 implements TransactionProce
 
 	@Override
 	public void setRequestVerb(Bundle.BundleEntryComponent theEntry, String theVerb) {
-		theEntry.getRequest().setMethod(Bundle.HTTPVerb.fromCode(theVerb));
+		try {
+			theEntry.getRequest().setMethod(Bundle.HTTPVerb.fromCode(theVerb));
+		} catch (FHIRException e) {
+			throw new InternalErrorException("Unknown verb: " + theVerb);
+		}
 	}
 
 	@Override

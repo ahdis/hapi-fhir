@@ -15,6 +15,7 @@ import org.hl7.fhir.dstu3.model.Questionnaire;
 import org.hl7.fhir.dstu3.model.Questionnaire.QuestionnaireItemComponent;
 import org.hl7.fhir.dstu3.model.Questionnaire.QuestionnaireItemEnableWhenComponent;
 import org.hl7.fhir.dstu3.model.Questionnaire.QuestionnaireItemType;
+import org.hl7.fhir.exceptions.FHIRFormatError;
 import org.hl7.fhir.dstu3.model.StringType;
 
 import org.junit.AfterClass;
@@ -30,7 +31,7 @@ public class SchematronValidationDstu3QuestionnaireTest {
 	private static int linkIdCnt = 1;
 
 	@Test
-	public void enableWhenWithAnswer() {
+	public void enableWhenWithAnswer() throws FHIRFormatError{
 		Questionnaire resource = new Questionnaire();
 		resource.setStatus(Enumerations.PublicationStatus.ACTIVE);
 
@@ -76,7 +77,7 @@ public class SchematronValidationDstu3QuestionnaireTest {
 	}
 
 	@Test
-	public void enableWhenWithHasAnswerAndAnswer() {
+	public void enableWhenWithHasAnswerAndAnswer() throws FHIRFormatError{
 		Questionnaire resource = new Questionnaire();
 		resource.setStatus(Enumerations.PublicationStatus.ACTIVE);
 

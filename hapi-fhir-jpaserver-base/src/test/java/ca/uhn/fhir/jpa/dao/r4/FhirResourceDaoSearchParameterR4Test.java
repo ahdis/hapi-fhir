@@ -1,10 +1,10 @@
 package ca.uhn.fhir.jpa.dao.r4;
 
-import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.context.RuntimeResourceDefinition;
-import ca.uhn.fhir.context.RuntimeSearchParam;
-import ca.uhn.fhir.jpa.dao.DaoConfig;
-import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+import org.hl7.fhir.exceptions.FHIRException;
 import org.hl7.fhir.r4.model.Enumerations;
 import org.hl7.fhir.r4.model.SearchParameter;
 import org.junit.Before;
@@ -12,9 +12,11 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.context.RuntimeResourceDefinition;
+import ca.uhn.fhir.context.RuntimeSearchParam;
+import ca.uhn.fhir.jpa.dao.DaoConfig;
+import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 
 public class FhirResourceDaoSearchParameterR4Test {
 
@@ -31,7 +33,7 @@ public class FhirResourceDaoSearchParameterR4Test {
 	}
 
 	@Test
-	public void testValidateAllBuiltInSearchParams() {
+	public void testValidateAllBuiltInSearchParams() throws FHIRException{
 
 		for (String nextResource : myCtx.getResourceNames()) {
 			RuntimeResourceDefinition nextResDef = myCtx.getResourceDefinition(nextResource);

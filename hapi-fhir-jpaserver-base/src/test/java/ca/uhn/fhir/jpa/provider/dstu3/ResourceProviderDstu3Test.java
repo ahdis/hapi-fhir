@@ -48,6 +48,7 @@ import org.hl7.fhir.dstu3.model.Observation.ObservationStatus;
 import org.hl7.fhir.dstu3.model.Questionnaire.QuestionnaireItemType;
 import org.hl7.fhir.dstu3.model.Subscription.SubscriptionChannelType;
 import org.hl7.fhir.dstu3.model.Subscription.SubscriptionStatus;
+import org.hl7.fhir.exceptions.FHIRFormatError;
 import org.hl7.fhir.instance.model.api.IBaseOperationOutcome;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
@@ -520,7 +521,7 @@ public class ResourceProviderDstu3Test extends BaseResourceProviderDstu3Test {
 
 	@Test
 	@Ignore
-	public void testCreateQuestionnaireResponseWithValidation() {
+	public void testCreateQuestionnaireResponseWithValidation() throws FHIRFormatError {
 		CodeSystem cs = new CodeSystem();
 		cs.setUrl("http://urn/system");
 		cs.addConcept().setCode("code0");
@@ -728,7 +729,7 @@ public class ResourceProviderDstu3Test extends BaseResourceProviderDstu3Test {
 		e1.getStatusElement().setValue(EncounterStatus.INPROGRESS);
 		EncounterLocationComponent location = e1.addLocation();
 		location.getLocation().setReferenceElement(l2id.toUnqualifiedVersionless());
-		location.setPeriod(new Period().setStart(new Date(), TemporalPrecisionEnum.SECOND).setEnd(new Date(), TemporalPrecisionEnum.SECOND));
+		location.setPeriod(new Period().setStart(new Date()).setEnd(new Date()));
 		IIdType e1id = ourClient.create().resource(e1).execute().getId();
 
 		//@formatter:off
@@ -1181,7 +1182,7 @@ public class ResourceProviderDstu3Test extends BaseResourceProviderDstu3Test {
 	}
 
 	@Test
-	public void testEverythingInstanceWithContentFilter() {
+	public void testEverythingInstanceWithContentFilter() throws FHIRFormatError {
 		Patient pt1 = new Patient();
 		pt1.addName().setFamily("Everything").addGiven("Arthur");
 		IIdType ptId1 = myPatientDao.create(pt1, mySrd).getId().toUnqualifiedVersionless();
@@ -1304,7 +1305,7 @@ public class ResourceProviderDstu3Test extends BaseResourceProviderDstu3Test {
 	 * Test for #226
 	 */
 	@Test
-	public void testEverythingPatientIncludesBackReferences() {
+	public void testEverythingPatientIncludesBackReferences() throws FHIRFormatError {
 		String methodName = "testEverythingIncludesBackReferences";
 
 		Medication med = new Medication();
@@ -2683,7 +2684,7 @@ public class ResourceProviderDstu3Test extends BaseResourceProviderDstu3Test {
 		int sleep = 100;
 		Thread.sleep(sleep);
 
-		DateTimeType beforeAny = new DateTimeType(new Date(), TemporalPrecisionEnum.MILLI);
+		DateTimeType beforeAny = new DateTimeType(new Date());
 		IIdType id1a;
 		{
 			Patient patient = new Patient();
@@ -2700,7 +2701,7 @@ public class ResourceProviderDstu3Test extends BaseResourceProviderDstu3Test {
 		}
 
 		Thread.sleep(1100);
-		DateTimeType beforeR2 = new DateTimeType(new Date(), TemporalPrecisionEnum.MILLI);
+		DateTimeType beforeR2 = new DateTimeType(new Date());
 		Thread.sleep(1100);
 
 		IIdType id2;
