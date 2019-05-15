@@ -29,10 +29,13 @@ import org.hl7.fhir.dstu3.model.Contributor.ContributorType;
 import org.hl7.fhir.dstu3.model.Enumerations.PublicationStatus;
 import org.hl7.fhir.dstu3.model.ExpansionProfile.DesignationIncludeDesignationComponent;
 import org.hl7.fhir.dstu3.model.ExpansionProfile.SystemVersionProcessingMode;
+import org.hl7.fhir.dstu3.model.MedicationStatement.MedicationStatementTaken;
 import org.hl7.fhir.dstu3.model.Parameters;
 import org.hl7.fhir.dstu3.model.Parameters.ParametersParameterComponent;
 import org.hl7.fhir.exceptions.FHIRException;
-import org.hl7.fhir.r4.model.*;
+import org.hl7.fhir.r4.model.BooleanType;
+import org.hl7.fhir.r4.model.CodeableConcept;
+import org.hl7.fhir.r4.model.Enumeration;
 import org.hl7.fhir.r4.model.Expression.ExpressionLanguage;
 import org.hl7.fhir.r4.model.BooleanType;
 import org.hl7.fhir.r4.model.Identifier;
@@ -40,7 +43,15 @@ import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.Type;
 import org.hl7.fhir.r4.model.UriType;
 import org.hl7.fhir.r4.model.HealthcareService.HealthcareServiceEligibilityComponent;
+import org.hl7.fhir.r4.model.Identifier;
+import org.hl7.fhir.r4.model.Questionnaire;
+import org.hl7.fhir.r4.model.Reference;
+import org.hl7.fhir.r4.model.TerminologyCapabilities;
+import org.hl7.fhir.r4.model.Type;
+import org.hl7.fhir.r4.model.UriType;
 import org.hl7.fhir.utilities.Utilities;
+
+import ca.uhn.fhir.context.FhirVersionEnum;
 
 
 /*
@@ -546,8 +557,13 @@ public class VersionConvertor_30_40 {
       return null;
     org.hl7.fhir.r4.model.Coding tgt = new org.hl7.fhir.r4.model.Coding();
     copyElement(src, tgt);
-    if (src.hasSystem())
-      tgt.setSystem(src.getSystem());
+    if (src.hasSystem()) {
+      String system = src.getSystem();
+      if ("http://hl7.org/fhir/observation-category".equals(system)) {
+        system = "http://terminology.hl7.org/CodeSystem/observation-category";
+      }
+      tgt.setSystem(system);
+    }
     if (src.hasVersion())
       tgt.setVersion(src.getVersion());
     if (src.hasCode())
@@ -612,8 +628,9 @@ public class VersionConvertor_30_40 {
     org.hl7.fhir.dstu3.model.Coding tgt = new org.hl7.fhir.dstu3.model.Coding();
     copyElement(src, tgt);
     if (src.hasCoding()) {
-      if (src.getCodingFirstRep().hasSystem())
+      if (src.getCodingFirstRep().hasSystem()) {
         tgt.setSystem(src.getCodingFirstRep().getSystem());
+      }
       if (src.getCodingFirstRep().hasVersion())
         tgt.setVersion(src.getCodingFirstRep().getVersion());
       if (src.getCodingFirstRep().hasCode())
@@ -631,8 +648,13 @@ public class VersionConvertor_30_40 {
       return null;
     org.hl7.fhir.dstu3.model.Coding tgt = new org.hl7.fhir.dstu3.model.Coding();
     copyElement(src, tgt);
-    if (src.hasSystem())
-      tgt.setSystem(src.getSystem());
+    if (src.hasSystem()) {
+        String system = src.getSystem();
+        if ("http://terminology.hl7.org/CodeSystem/observation-category".equals(system)) {
+          system = "http://hl7.org/fhir/observation-category";
+        }
+      tgt.setSystem(system);
+    }
     if (src.hasVersion())
       tgt.setVersion(src.getVersion());
     if (src.hasCode())
@@ -785,10 +807,10 @@ public class VersionConvertor_30_40 {
       return null;
     org.hl7.fhir.r4.model.Period tgt = new org.hl7.fhir.r4.model.Period();
     copyElement(src, tgt);
-    if (src.hasStart())
-      tgt.setStart(src.getStart());
-    if (src.hasEnd())
-      tgt.setEnd(src.getEnd());
+    if (src.hasStartElement())
+      tgt.setStartElement(convertDateTime(src.getStartElement()));
+    if (src.hasEndElement())
+      tgt.setEndElement(convertDateTime(src.getEndElement()));
     return tgt;
   }
 
@@ -797,10 +819,10 @@ public class VersionConvertor_30_40 {
       return null;
     org.hl7.fhir.dstu3.model.Period tgt = new org.hl7.fhir.dstu3.model.Period();
     copyElement(src, tgt);
-    if (src.hasStart())
-      tgt.setStart(src.getStart());
-    if (src.hasEnd())
-      tgt.setEnd(src.getEnd());
+    if (src.hasStartElement())
+      tgt.setStartElement(convertDateTime(src.getStartElement()));
+    if (src.hasEndElement())
+      tgt.setEndElement(convertDateTime(src.getEndElement()));
     return tgt;
   }
 
@@ -857,7 +879,7 @@ public class VersionConvertor_30_40 {
   public static org.hl7.fhir.dstu3.model.Quantity convertQuantity(org.hl7.fhir.r4.model.Quantity src) throws FHIRException {
     if (src == null)
       return null;
-    org.hl7.fhir.dstu3.model.Quantity tgt = new org.hl7.fhir.dstu3.model.Quantity();
+    org.hl7.fhir.dstu3.model.Quantity tgt = new org.hl7.fhir.dstu3.model.SimpleQuantity();
     copyElement(src, tgt);
     if (src.hasValue())
       tgt.setValue(src.getValue());
@@ -1397,8 +1419,9 @@ public class VersionConvertor_30_40 {
       tgt.setRoute(convertCodeableConcept(src.getRoute()));
     if (src.hasMethod())
       tgt.setMethod(convertCodeableConcept(src.getMethod()));
-    if (src.hasDoseAndRate() && src.getDoseAndRate().get(0).hasDose())
+    if (src.hasDoseAndRate() && src.getDoseAndRate().get(0).hasDose()) {
       tgt.setDose(convertType(src.getDoseAndRate().get(0).getDose()));
+    }
     if (src.hasMaxDosePerPeriod())
       tgt.setMaxDosePerPeriod(convertRatio(src.getMaxDosePerPeriod()));
     if (src.hasMaxDosePerAdministration())
@@ -7790,19 +7813,19 @@ public class VersionConvertor_30_40 {
     org.hl7.fhir.r4.model.CodeableConcept cc = new org.hl7.fhir.r4.model.CodeableConcept();
     switch (src) {
       case ACTIVE: 
-        cc.addCoding().setSystem("http://hl7.org/fhir/condition-clinical").setCode("active");
+        cc.addCoding().setSystem("http://terminology.hl7.org/CodeSystem/condition-clinical").setCode("active");
         return cc;
       case RECURRENCE: 
-        cc.addCoding().setSystem("http://hl7.org/fhir/condition-clinical").setCode("recurrence");
+        cc.addCoding().setSystem("http://terminology.hl7.org/CodeSystem/condition-clinical").setCode("recurrence");
         return cc;
       case INACTIVE: 
-        cc.addCoding().setSystem("http://hl7.org/fhir/condition-clinical").setCode("inactive");
+        cc.addCoding().setSystem("http://terminology.hl7.org/CodeSystem/condition-clinical").setCode("inactive");
         return cc;
       case REMISSION: 
-        cc.addCoding().setSystem("http://hl7.org/fhir/condition-clinical").setCode("remission");
+        cc.addCoding().setSystem("http://terminology.hl7.org/CodeSystem/condition-clinical").setCode("remission");
         return cc;
       case RESOLVED:
-        cc.addCoding().setSystem("http://hl7.org/fhir/condition-clinical").setCode("resolved");
+        cc.addCoding().setSystem("http://terminology.hl7.org/CodeSystem/condition-clinical").setCode("resolved");
         return cc;
       default: return null;
       }
@@ -7811,11 +7834,11 @@ public class VersionConvertor_30_40 {
   private static org.hl7.fhir.dstu3.model.Condition.ConditionClinicalStatus convertConditionClinicalStatus(org.hl7.fhir.r4.model.CodeableConcept src) throws FHIRException {
     if (src == null)
       return null;
-    if (src.hasCoding("http://hl7.org/fhir/condition-clinical", "active")) return org.hl7.fhir.dstu3.model.Condition.ConditionClinicalStatus.ACTIVE;
-    if (src.hasCoding("http://hl7.org/fhir/condition-clinical", "recurrence")) return org.hl7.fhir.dstu3.model.Condition.ConditionClinicalStatus.RECURRENCE;
-    if (src.hasCoding("http://hl7.org/fhir/condition-clinical", "inactive")) return org.hl7.fhir.dstu3.model.Condition.ConditionClinicalStatus.INACTIVE;
-    if (src.hasCoding("http://hl7.org/fhir/condition-clinical", "remission")) return org.hl7.fhir.dstu3.model.Condition.ConditionClinicalStatus.REMISSION;
-    if (src.hasCoding("http://hl7.org/fhir/condition-clinical", "resolved")) return org.hl7.fhir.dstu3.model.Condition.ConditionClinicalStatus.RESOLVED;
+    if (src.hasCoding("http://terminology.hl7.org/CodeSystem/condition-clinical", "active")) return org.hl7.fhir.dstu3.model.Condition.ConditionClinicalStatus.ACTIVE;
+    if (src.hasCoding("http://terminology.hl7.org/CodeSystem/condition-clinical", "recurrence")) return org.hl7.fhir.dstu3.model.Condition.ConditionClinicalStatus.RECURRENCE;
+    if (src.hasCoding("http://terminology.hl7.org/CodeSystem/condition-clinical", "inactive")) return org.hl7.fhir.dstu3.model.Condition.ConditionClinicalStatus.INACTIVE;
+    if (src.hasCoding("http://terminology.hl7.org/CodeSystem/condition-clinical", "remission")) return org.hl7.fhir.dstu3.model.Condition.ConditionClinicalStatus.REMISSION;
+    if (src.hasCoding("http://terminology.hl7.org/CodeSystem/condition-clinical", "resolved")) return org.hl7.fhir.dstu3.model.Condition.ConditionClinicalStatus.RESOLVED;
     return org.hl7.fhir.dstu3.model.Condition.ConditionClinicalStatus.NULL;
   }
 
@@ -13459,6 +13482,7 @@ public class VersionConvertor_30_40 {
 //      tgt.setTaken(convertMedicationStatementTaken(src.getExtensionByUrl(VersionConvertorConstants.MODIFIER_TAKEN)));
 //    for (org.hl7.fhir.r4.model.CodeableConcept t : src.getReasonNotTaken())
 //      tgt.addReasonNotTaken(convertCodeableConcept(t));
+    tgt.setTaken(MedicationStatementTaken.UNK);
     for (org.hl7.fhir.r4.model.CodeableConcept t : src.getReasonCode())
       tgt.addReasonCode(convertCodeableConcept(t));
     for (org.hl7.fhir.r4.model.Reference t : src.getReasonReference())
@@ -17430,7 +17454,7 @@ public class VersionConvertor_30_40 {
     for (org.hl7.fhir.dstu3.model.Coding t : src.getKeyword())
       tgt.addKeyword(convertCoding(t));
     if (src.hasFhirVersion())
-      tgt.setFhirVersion(org.hl7.fhir.r4.model.Enumerations.FHIRVersion.fromCode(src.getFhirVersion()));
+      tgt.setFhirVersion(org.hl7.fhir.r4.model.Enumerations.FHIRVersion.fromCode(FhirVersionEnum.R4.getFhirVersionString()));
     for (org.hl7.fhir.dstu3.model.StructureDefinition.StructureDefinitionMappingComponent t : src.getMapping())
       tgt.addMapping(convertStructureDefinitionMappingComponent(t));
     if (src.hasKind())
@@ -17502,7 +17526,7 @@ public class VersionConvertor_30_40 {
     for (org.hl7.fhir.r4.model.Coding t : src.getKeyword())
       tgt.addKeyword(convertCoding(t));
     if (src.hasFhirVersion())
-      tgt.setFhirVersion(src.getFhirVersion().toCode());
+      tgt.setFhirVersion(FhirVersionEnum.DSTU3.getFhirVersionString());
     for (org.hl7.fhir.r4.model.StructureDefinition.StructureDefinitionMappingComponent t : src.getMapping())
       tgt.addMapping(convertStructureDefinitionMappingComponent(t));
     if (src.hasKind())
