@@ -528,6 +528,8 @@
 		<!-- Dependency Versions -->
 		<fhircore_version>3.7.34-SNAPSHOT</fhircore_version> 
 		
+
+		
 		<activation_api_version>1.2.0</activation_api_version>
 		<apache_karaf_version>4.2.2</apache_karaf_version>
 		<aries_spifly_version>1.2</aries_spifly_version>
