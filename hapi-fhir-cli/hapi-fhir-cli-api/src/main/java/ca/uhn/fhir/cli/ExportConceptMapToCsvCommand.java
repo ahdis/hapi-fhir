@@ -113,7 +113,7 @@ public class ExportConceptMapToCsvCommand extends AbstractImportExportCsvConcept
 
 	private void convertConceptMapToCsv(org.hl7.fhir.dstu3.model.ConceptMap theConceptMap) throws ExecutionException {
 		try {
-			convertConceptMapToCsv(VersionConvertor_30_40.convertConceptMap(theConceptMap));
+			convertConceptMapToCsv(new VersionConvertor_30_40().convertConceptMap(theConceptMap));
 		} catch (FHIRException fe) {
 			throw new ExecutionException(fe);
 		}

@@ -374,7 +374,7 @@ public abstract class BaseJpaDstu3Test extends BaseJpaTest {
 	 */
 	public static ConceptMap createConceptMap() {
 		try {
-			return VersionConvertor_30_40.convertConceptMap(BaseJpaR4Test.createConceptMap());
+			return new VersionConvertor_30_40().convertConceptMap(BaseJpaR4Test.createConceptMap());
 		} catch (FHIRException fe) {
 			throw new InternalErrorException(fe);
 		}

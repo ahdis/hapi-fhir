@@ -68,6 +68,8 @@ public class FhirInstanceValidator extends BaseValidatorBridge implements IValid
 
 	private boolean errorForUnknownProfiles;
 	private List<String> extensionDomains = Collections.emptyList();
+	private VersionConvertor_30_40 versionConvertor_30_40 = new VersionConvertor_30_40();
+
 
 	/**
 	 * Constructor
@@ -443,7 +445,7 @@ public class FhirInstanceValidator extends BaseValidatorBridge implements IValid
 						}
 
 						try {
-							return VersionConvertor_30_40.convertResource(fetched, true);
+							return versionConvertor_30_40.convertResource(fetched, true);
 						} catch (FHIRException e) {
 							throw new InternalErrorException(e);
 						}
@@ -474,7 +476,7 @@ public class FhirInstanceValidator extends BaseValidatorBridge implements IValid
 				retVal = new ArrayList<>();
 				for (StructureDefinition next : myWrap.allStructures()) {
 					try {
-						retVal.add(VersionConvertor_30_40.convertStructureDefinition(next));
+						retVal.add(versionConvertor_30_40.convertStructureDefinition(next));
 					} catch (FHIRException e) {
 						throw new InternalErrorException(e);
 					}
@@ -496,7 +498,7 @@ public class FhirInstanceValidator extends BaseValidatorBridge implements IValid
 			org.hl7.fhir.r4.model.CodeSystem.ConceptDefinitionComponent conceptDefinition = null;
 			if (theResult.asConceptDefinition() != null) {
 				try {
-					conceptDefinition = VersionConvertor_30_40.convertConceptDefinitionComponent(theResult.asConceptDefinition());
+					conceptDefinition = versionConvertor_30_40.convertConceptDefinitionComponent(theResult.asConceptDefinition());
 				} catch (FHIRException e) {
 					throw new InternalErrorException(e);
 				}
@@ -510,7 +512,7 @@ public class FhirInstanceValidator extends BaseValidatorBridge implements IValid
 		public ValueSetExpander.ValueSetExpansionOutcome expandVS(org.hl7.fhir.r4.model.ValueSet source, boolean cacheOk, boolean heiarchical) {
 			ValueSet convertedSource;
 			try {
-				convertedSource = VersionConvertor_30_40.convertValueSet(source);
+				convertedSource = versionConvertor_30_40.convertValueSet(source);
 			} catch (FHIRException e) {
 				throw new InternalErrorException(e);
 			}
@@ -519,7 +521,7 @@ public class FhirInstanceValidator extends BaseValidatorBridge implements IValid
 			org.hl7.fhir.r4.model.ValueSet convertedResult = null;
 			if (expanded.getValueset() != null) {
 				try {
-					convertedResult = VersionConvertor_30_40.convertValueSet(expanded.getValueset());
+					convertedResult = versionConvertor_30_40.convertValueSet(expanded.getValueset());
 				} catch (FHIRException e) {
 					throw new InternalErrorException(e);
 				}
@@ -541,7 +543,7 @@ public class FhirInstanceValidator extends BaseValidatorBridge implements IValid
 			ValueSet.ConceptSetComponent convertedInc = null;
 			if (inc != null) {
 				try {
-					convertedInc = VersionConvertor_30_40.convertConceptSetComponent(inc);
+					convertedInc = versionConvertor_30_40.convertConceptSetComponent(inc);
 				} catch (FHIRException e) {
 					throw new InternalErrorException(e);
 				}
@@ -551,7 +553,7 @@ public class FhirInstanceValidator extends BaseValidatorBridge implements IValid
 			org.hl7.fhir.r4.model.ValueSet.ValueSetExpansionComponent valueSetExpansionComponent = null;
 			if (expansion != null) {
 				try {
-					valueSetExpansionComponent = VersionConvertor_30_40.convertValueSetExpansionComponent(expansion);
+					valueSetExpansionComponent = versionConvertor_30_40.convertValueSetExpansionComponent(expansion);
 				} catch (FHIRException e) {
 					throw new InternalErrorException(e);
 				}
@@ -569,7 +571,7 @@ public class FhirInstanceValidator extends BaseValidatorBridge implements IValid
 				return null;
 			}
 			try {
-				return VersionConvertor_30_40.convertCodeSystem(fetched);
+				return versionConvertor_30_40.convertCodeSystem(fetched);
 			} catch (FHIRException e) {
 				throw new InternalErrorException(e);
 			}
@@ -756,7 +758,7 @@ public class FhirInstanceValidator extends BaseValidatorBridge implements IValid
 
 			try {
 				if (vs != null) {
-					convertedVs = VersionConvertor_30_40.convertValueSet(vs);
+					convertedVs = versionConvertor_30_40.convertValueSet(vs);
 				}
 			} catch (FHIRException e) {
 				throw new InternalErrorException(e);
@@ -771,7 +773,7 @@ public class FhirInstanceValidator extends BaseValidatorBridge implements IValid
 			ValueSet convertedVs = null;
 			try {
 				if (vs != null) {
-					convertedVs = VersionConvertor_30_40.convertValueSet(vs);
+					convertedVs = versionConvertor_30_40.convertValueSet(vs);
 				}
 			} catch (FHIRException e) {
 				throw new InternalErrorException(e);
@@ -788,10 +790,10 @@ public class FhirInstanceValidator extends BaseValidatorBridge implements IValid
 
 			try {
 				if (code != null) {
-					convertedCode = VersionConvertor_30_40.convertCoding(code);
+					convertedCode = versionConvertor_30_40.convertCoding(code);
 				}
 				if (vs != null) {
-					convertedVs = VersionConvertor_30_40.convertValueSet(vs);
+					convertedVs = versionConvertor_30_40.convertValueSet(vs);
 				}
 			} catch (FHIRException e) {
 				throw new InternalErrorException(e);
@@ -809,10 +811,10 @@ public class FhirInstanceValidator extends BaseValidatorBridge implements IValid
 
 			try {
 				if (code != null) {
-					convertedCode = VersionConvertor_30_40.convertCodeableConcept(code);
+					convertedCode = versionConvertor_30_40.convertCodeableConcept(code);
 				}
 				if (vs != null) {
-					convertedVs = VersionConvertor_30_40.convertValueSet(vs);
+					convertedVs = versionConvertor_30_40.convertValueSet(vs);
 				}
 			} catch (FHIRException e) {
 				throw new InternalErrorException(e);
@@ -828,7 +830,7 @@ public class FhirInstanceValidator extends BaseValidatorBridge implements IValid
 			ValueSet.ConceptSetComponent conceptSetComponent = null;
 			if (vsi != null) {
 				try {
-					conceptSetComponent = VersionConvertor_30_40.convertConceptSetComponent(vsi);
+					conceptSetComponent = versionConvertor_30_40.convertConceptSetComponent(vsi);
 				} catch (FHIRException e) {
 					throw new InternalErrorException(e);
 				}

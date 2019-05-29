@@ -61,6 +61,9 @@ public class HapiTerminologySvcDstu3 extends BaseHapiTerminologySvcImpl implemen
 	private IValidationSupport myValidationSupport;
 	@Autowired
 	private IHapiTerminologySvc myTerminologySvc;
+	
+  private VersionConvertor_30_40 versionConvertor_30_40 = new VersionConvertor_30_40();
+
 
 	/**
 	 * Constructor
@@ -96,7 +99,7 @@ public class HapiTerminologySvcDstu3 extends BaseHapiTerminologySvcImpl implemen
 	protected IIdType createOrUpdateCodeSystem(org.hl7.fhir.r4.model.CodeSystem theCodeSystemResource) {
 		CodeSystem resourceToStore;
 		try {
-			resourceToStore = VersionConvertor_30_40.convertCodeSystem(theCodeSystemResource);
+			resourceToStore = versionConvertor_30_40.convertCodeSystem(theCodeSystemResource);
 		} catch (FHIRException e) {
 			throw new InternalErrorException(e);
 		}
@@ -112,7 +115,7 @@ public class HapiTerminologySvcDstu3 extends BaseHapiTerminologySvcImpl implemen
 	protected void createOrUpdateConceptMap(org.hl7.fhir.r4.model.ConceptMap theConceptMap) {
 		ConceptMap resourceToStore;
 		try {
-			resourceToStore = VersionConvertor_30_40.convertConceptMap(theConceptMap);
+			resourceToStore = versionConvertor_30_40.convertConceptMap(theConceptMap);
 		} catch (FHIRException e) {
 			throw new InternalErrorException(e);
 		}
@@ -128,7 +131,7 @@ public class HapiTerminologySvcDstu3 extends BaseHapiTerminologySvcImpl implemen
 	protected void createOrUpdateValueSet(org.hl7.fhir.r4.model.ValueSet theValueSet) {
 		ValueSet valueSetDstu3;
 		try {
-			valueSetDstu3 = VersionConvertor_30_40.convertValueSet(theValueSet);
+			valueSetDstu3 = versionConvertor_30_40.convertValueSet(theValueSet);
 		} catch (FHIRException e) {
 			throw new InternalErrorException(e);
 		}
@@ -148,9 +151,9 @@ public class HapiTerminologySvcDstu3 extends BaseHapiTerminologySvcImpl implemen
 
 		try {
 			org.hl7.fhir.r4.model.ValueSet valueSetToExpandR4;
-			valueSetToExpandR4 = VersionConvertor_30_40.convertValueSet(valueSetToExpand);
+			valueSetToExpandR4 = versionConvertor_30_40.convertValueSet(valueSetToExpand);
 			org.hl7.fhir.r4.model.ValueSet.ValueSetExpansionComponent expandedR4 = super.expandValueSet(valueSetToExpandR4).getExpansion();
-			return VersionConvertor_30_40.convertValueSetExpansionComponent(expandedR4);
+			return versionConvertor_30_40.convertValueSetExpansionComponent(expandedR4);
 		} catch (FHIRException e) {
 			throw new InternalErrorException(e);
 		}
@@ -162,9 +165,9 @@ public class HapiTerminologySvcDstu3 extends BaseHapiTerminologySvcImpl implemen
 
 		try {
 			org.hl7.fhir.r4.model.ValueSet valueSetToExpandR4;
-			valueSetToExpandR4 = VersionConvertor_30_40.convertValueSet(valueSetToExpand);
+			valueSetToExpandR4 = versionConvertor_30_40.convertValueSet(valueSetToExpand);
 			org.hl7.fhir.r4.model.ValueSet expandedR4 = super.expandValueSet(valueSetToExpandR4);
-			return VersionConvertor_30_40.convertValueSet(expandedR4);
+			return versionConvertor_30_40.convertValueSet(expandedR4);
 		} catch (FHIRException e) {
 			throw new InternalErrorException(e);
 		}
@@ -179,7 +182,7 @@ public class HapiTerminologySvcDstu3 extends BaseHapiTerminologySvcImpl implemen
 
 		org.hl7.fhir.r4.model.ValueSet valueSetToExpandR4;
 		try {
-			valueSetToExpandR4 = VersionConvertor_30_40.convertValueSet(vs);
+			valueSetToExpandR4 = versionConvertor_30_40.convertValueSet(vs);
 		} catch (FHIRException e) {
 			throw new InternalErrorException(e);
 		}
@@ -267,7 +270,7 @@ public class HapiTerminologySvcDstu3 extends BaseHapiTerminologySvcImpl implemen
 	protected org.hl7.fhir.r4.model.CodeSystem getCodeSystemFromContext(String theSystem) {
 		CodeSystem codeSystem = myValidationSupport.fetchCodeSystem(myContext, theSystem);
 		try {
-			return VersionConvertor_30_40.convertCodeSystem(codeSystem);
+			return versionConvertor_30_40.convertCodeSystem(codeSystem);
 		} catch (FHIRException e) {
 			throw new InternalErrorException(e);
 		}
