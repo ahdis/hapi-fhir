@@ -48,24 +48,25 @@ public class TerminologyUploaderProviderDstu3 extends BaseTerminologyUploaderPro
 		@OperationParam(name = "localfile", min = 1, max = OperationParam.MAX_UNLIMITED) List<StringType> theLocalFile,
 		@OperationParam(name = "package", min = 0, max = OperationParam.MAX_UNLIMITED) List<Attachment> thePackage,
 		RequestDetails theRequestDetails
-	) {
+	) {	  
 		try {
+	    VersionConvertor_30_40 versionConvertor_30_40 = new VersionConvertor_30_40();
 			List<org.hl7.fhir.r4.model.StringType> localFile = null;
 			if (theLocalFile != null) {
 				localFile = new ArrayList<>();
 				for (StringType next : theLocalFile) {
-					localFile.add(VersionConvertor_30_40.convertString(next));
+					localFile.add(versionConvertor_30_40.convertString(next));
 				}
 			}
 			List<org.hl7.fhir.r4.model.Attachment> pkg = null;
 			if (thePackage!=null){
 				pkg = new ArrayList<>();
 				for (Attachment next : thePackage) {
-					pkg.add(VersionConvertor_30_40.convertAttachment(next));
+					pkg.add(versionConvertor_30_40.convertAttachment(next));
 				}
 			}
 			org.hl7.fhir.r4.model.Parameters retValR4 = handleUploadExternalCodeSystem(theServletRequest, theCodeSystemUrl, localFile, pkg, theRequestDetails);
-			return VersionConvertor_30_40.convertParameters(retValR4);
+			return versionConvertor_30_40.convertParameters(retValR4);
 		} catch (FHIRException e) {
 			throw new InternalErrorException(e);
 		}

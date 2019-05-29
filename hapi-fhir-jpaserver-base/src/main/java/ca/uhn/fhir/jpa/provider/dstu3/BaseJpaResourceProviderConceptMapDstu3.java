@@ -74,6 +74,8 @@ public class BaseJpaResourceProviderConceptMapDstu3 extends JpaResourceProviderD
 			&& theTargetCodeSystem.hasValue();
 		boolean haveReverse = theReverse != null;
 		boolean haveId = theId != null && theId.hasIdPart();
+		
+		VersionConvertor_30_40 versionConvertor_30_40 = new VersionConvertor_30_40();
 
 		// <editor-fold desc="Filters">
 		if ((!haveSourceCode && !haveSourceCoding && !haveSourceCodeableConcept)
@@ -85,35 +87,35 @@ public class BaseJpaResourceProviderConceptMapDstu3 extends JpaResourceProviderD
 		try {
 			// Convert from DSTU3 to R4
 			if (haveSourceCode) {
-				translationRequest.getCodeableConcept().addCoding().setCodeElement(VersionConvertor_30_40.convertCode(theSourceCode));
+				translationRequest.getCodeableConcept().addCoding().setCodeElement(versionConvertor_30_40.convertCode(theSourceCode));
 
 				if (haveSourceCodeSystem) {
-					translationRequest.getCodeableConcept().getCodingFirstRep().setSystemElement(VersionConvertor_30_40.convertUri(theSourceCodeSystem));
+					translationRequest.getCodeableConcept().getCodingFirstRep().setSystemElement(versionConvertor_30_40.convertUri(theSourceCodeSystem));
 				}
 
 				if (haveSourceCodeSystemVersion) {
-					translationRequest.getCodeableConcept().getCodingFirstRep().setVersionElement(VersionConvertor_30_40.convertString(theSourceCodeSystemVersion));
+					translationRequest.getCodeableConcept().getCodingFirstRep().setVersionElement(versionConvertor_30_40.convertString(theSourceCodeSystemVersion));
 				}
 			} else if (haveSourceCoding) {
-				translationRequest.getCodeableConcept().addCoding(VersionConvertor_30_40.convertCoding(theSourceCoding));
+				translationRequest.getCodeableConcept().addCoding(versionConvertor_30_40.convertCoding(theSourceCoding));
 			} else {
-				translationRequest.setCodeableConcept(VersionConvertor_30_40.convertCodeableConcept(theSourceCodeableConcept));
+				translationRequest.setCodeableConcept(versionConvertor_30_40.convertCodeableConcept(theSourceCodeableConcept));
 			}
 
 			if (haveSourceValueSet) {
-				translationRequest.setSource(VersionConvertor_30_40.convertUri(theSourceValueSet));
+				translationRequest.setSource(versionConvertor_30_40.convertUri(theSourceValueSet));
 			}
 
 			if (haveTargetValueSet) {
-				translationRequest.setTarget(VersionConvertor_30_40.convertUri(theTargetValueSet));
+				translationRequest.setTarget(versionConvertor_30_40.convertUri(theTargetValueSet));
 			}
 
 			if (haveTargetCodeSystem) {
-				translationRequest.setTargetSystem(VersionConvertor_30_40.convertUri(theTargetCodeSystem));
+				translationRequest.setTargetSystem(versionConvertor_30_40.convertUri(theTargetCodeSystem));
 			}
 
 			if (haveReverse) {
-				translationRequest.setReverse(VersionConvertor_30_40.convertBoolean(theReverse));
+				translationRequest.setReverse(versionConvertor_30_40.convertBoolean(theReverse));
 			}
 
 			if (haveId) {
@@ -129,7 +131,7 @@ public class BaseJpaResourceProviderConceptMapDstu3 extends JpaResourceProviderD
 			TranslationResult result = dao.translate(translationRequest, theRequestDetails);
 
 			// Convert from R4 to DSTU3
-			return VersionConvertor_30_40.convertParameters(result.toParameters());
+			return versionConvertor_30_40.convertParameters(result.toParameters());
 		} catch (FHIRException fe) {
 			throw new InternalErrorException(fe);
 		} finally {
