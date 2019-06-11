@@ -54,6 +54,7 @@ import org.hl7.fhir.dstu3.model.Type;
 import org.hl7.fhir.dstu3.model.UriType;
 import org.hl7.fhir.dstu3.model.ValueSet;
 import org.hl7.fhir.exceptions.FHIRFormatError;
+import org.hl7.fhir.utilities.validation.ValidationMessage;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -420,7 +421,7 @@ public class QuestionnaireResponseValidatorDstu3Test {
 	}
 	
 	@Test
-	public void testRequiredQuestionWithEnableWhenHidesQuestion() {
+	public void testRequiredQuestionWithEnableWhenHidesQuestion() throws FHIRFormatError {
 
 		Questionnaire q = new Questionnaire();
 		q.addItem().setLinkId("link0").setRequired(false).setType(QuestionnaireItemType.STRING);

@@ -48,8 +48,19 @@ import org.hl7.fhir.dstu3.model.Bundle.BundleEntryComponent;
 import org.hl7.fhir.dstu3.model.Bundle.BundleType;
 import org.hl7.fhir.dstu3.model.CapabilityStatement;
 import org.hl7.fhir.dstu3.model.CapabilityStatement.UnknownContentCode;
-import org.hl7.fhir.dstu3.model.Enumeration;
+import org.hl7.fhir.dstu3.model.Claim;
+import org.hl7.fhir.dstu3.model.Coding;
+import org.hl7.fhir.dstu3.model.Communication;
+import org.hl7.fhir.dstu3.model.Condition;
 import org.hl7.fhir.dstu3.model.Condition.ConditionVerificationStatus;
+import org.hl7.fhir.dstu3.model.Coverage;
+import org.hl7.fhir.dstu3.model.DateTimeType;
+import org.hl7.fhir.dstu3.model.DateType;
+import org.hl7.fhir.dstu3.model.DecimalType;
+import org.hl7.fhir.dstu3.model.DiagnosticReport;
+import org.hl7.fhir.dstu3.model.DocumentManifest;
+import org.hl7.fhir.dstu3.model.EnumFactory;
+import org.hl7.fhir.dstu3.model.Enumeration;
 import org.hl7.fhir.dstu3.model.Enumerations.AdministrativeGender;
 import org.hl7.fhir.dstu3.model.ExplanationOfBenefit;
 import org.hl7.fhir.dstu3.model.Extension;
@@ -61,6 +72,7 @@ import org.hl7.fhir.dstu3.model.Medication;
 import org.hl7.fhir.dstu3.model.MedicationRequest;
 import org.hl7.fhir.dstu3.model.Observation;
 import org.hl7.fhir.dstu3.model.Observation.ObservationStatus;
+import org.hl7.fhir.dstu3.model.Organization;
 import org.hl7.fhir.dstu3.model.Parameters;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.dstu3.model.PrimitiveType;
@@ -68,6 +80,7 @@ import org.hl7.fhir.dstu3.model.Quantity;
 import org.hl7.fhir.dstu3.model.QuestionnaireResponse;
 import org.hl7.fhir.dstu3.model.Reference;
 import org.hl7.fhir.dstu3.model.RelatedPerson;
+import org.hl7.fhir.dstu3.model.Resource;
 import org.hl7.fhir.dstu3.model.SampledData;
 import org.hl7.fhir.dstu3.model.SimpleQuantity;
 import org.hl7.fhir.dstu3.model.StringType;
@@ -88,17 +101,6 @@ import org.mockito.Mockito;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Sets;
 
-<<<<<<< HEAD
-import static org.apache.commons.lang3.StringUtils.countMatches;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isNull;
-import static org.mockito.Mockito.nullable;
-import static org.mockito.Mockito.*;
-=======
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.narrative.DefaultThymeleafNarrativeGenerator;
 import ca.uhn.fhir.parser.IParserErrorHandler.IParseLocation;
@@ -112,7 +114,6 @@ import ca.uhn.fhir.validation.ValidationResult;
 import net.sf.json.JSON;
 import net.sf.json.JSONSerializer;
 import net.sf.json.JsonConfig;
->>>>>>> add r4 from org.hl7.fhir.core
 
 public class JsonParserDstu3Test {
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(JsonParserDstu3Test.class);
@@ -1363,7 +1364,7 @@ public class JsonParserDstu3Test {
 	}
 
 	@Test
-	public void testExponentDoesntGetEncodedAsSuch() throws FHIRFormatError  {
+	public void testExponentDoesntGetEncodedAsSuch() throws FHIRFormatError {
 		Observation obs = new Observation();
 		obs.setValue(new Quantity().setValue(new BigDecimal("0.000000000000000100")));
 
@@ -2310,7 +2311,7 @@ public class JsonParserDstu3Test {
 	 * See #344
 	 */
 	@Test
-	public void testParserIsCaseSensitive()  throws FHIRFormatError  {
+	public void testParserIsCaseSensitive() throws FHIRFormatError {
 		Observation obs = new Observation();
 		SampledData data = new SampledData();
 		data.setData("1 2 3");
@@ -2343,7 +2344,7 @@ public class JsonParserDstu3Test {
 	 * See #144 and #146
 	 */
 	@Test
-	public void testReportSerialize()  throws FHIRFormatError {
+	public void testReportSerialize() throws FHIRFormatError {
 
 		ReportObservationDstu3 obsv = new ReportObservationDstu3();
 		obsv.getCode().addCoding().setCode("name");
@@ -2365,7 +2366,7 @@ public class JsonParserDstu3Test {
 	 * See #144 and #146
 	 */
 	@Test
-	public void testReportSerializeWithMatchingId()  throws FHIRFormatError  {
+	public void testReportSerializeWithMatchingId() throws FHIRFormatError {
 
 		ReportObservationDstu3 obsv = new ReportObservationDstu3();
 		obsv.getCode().addCoding().setCode("name");

@@ -83,6 +83,7 @@ import org.hl7.fhir.r4.model.Subscription.SubscriptionChannelType;
 import org.hl7.fhir.r4.model.Subscription.SubscriptionStatus;
 import org.hl7.fhir.r4.model.Substance;
 import org.hl7.fhir.r4.model.Task;
+import org.hl7.fhir.r4.model.Timing;
 import org.hl7.fhir.r4.model.ValueSet;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -1393,7 +1394,7 @@ public class FhirResourceDaoR4SearchNoFtTest extends BaseJpaR4Test {
 
 
 	@Test
-	public void testSearchDate_TimingValueUsingPeriod() {
+	public void testSearchDate_TimingValueUsingPeriod() throws FHIRException {
 		ServiceRequest p1 = new ServiceRequest();
 		p1.setOccurrence(new Timing());
 		p1.getOccurrenceTiming().getRepeat().setBounds(new Period());

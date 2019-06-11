@@ -546,23 +546,7 @@
 		<scmPubCheckoutDirectory>${user.home}/sites/scm/hapi-fhir</scmPubCheckoutDirectory>
 
 		<!-- Dependency Versions -->
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-		<fhircore_version>3.7.31-SNAPSHOT</fhircore_version>
-=======
-<<<<<<< HEAD
-		<fhircore_version>3.7.30-SNAPSHOT</fhircore_version>
-=======
-		<fhircore_version>3.7.26-SNAPSHOT</fhircore_version>
->>>>>>> adaption to latest version
->>>>>>> adaption to latest version
-=======
-		<fhircore_version>3.7.31-SNAPSHOT</fhircore_version>
->>>>>>> R30_40 conversion
-=======
-		<fhircore_version>3.7.36-SNAPSHOT</fhircore_version> 
->>>>>>> Versionconverter not static
+		<fhircore_version>3.8.3-SNAPSHOT</fhircore_version>
 		<activation_api_version>1.2.0</activation_api_version>
 		<apache_karaf_version>4.2.5</apache_karaf_version>
 		<aries_spifly_version>1.2</aries_spifly_version>
