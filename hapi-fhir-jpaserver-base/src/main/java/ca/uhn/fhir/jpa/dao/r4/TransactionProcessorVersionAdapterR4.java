@@ -155,7 +155,11 @@ public class TransactionProcessorVersionAdapterR4 implements TransactionProcesso
 
 	@Override
 	public void setRequestVerb(Bundle.BundleEntryComponent theEntry, String theVerb) {
-		theEntry.getRequest().setMethod(Bundle.HTTPVerb.fromCode(theVerb));
+		try {
+			theEntry.getRequest().setMethod(Bundle.HTTPVerb.fromCode(theVerb));
+		} catch (FHIRException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override

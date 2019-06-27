@@ -741,6 +741,10 @@ public class RestfulServer extends HttpServlet implements IRestfulServer<Servlet
 			fhirServerBase = fhirServerBase.substring(0, fhirServerBase.length() - 1);
 		}
 
+		if (fhirServerBase.endsWith("/*")) {
+			fhirServerBase = fhirServerBase.substring(0, fhirServerBase.length() - 2);
+		}
+
 		if (myTenantIdentificationStrategy != null) {
 			fhirServerBase = myTenantIdentificationStrategy.massageServerBaseUrl(fhirServerBase, theRequest);
 		}

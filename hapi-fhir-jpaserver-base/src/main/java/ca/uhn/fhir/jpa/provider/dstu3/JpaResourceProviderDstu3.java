@@ -91,7 +91,7 @@ public class JpaResourceProviderDstu3<T extends IAnyResource> extends BaseJpaRes
 		RequestDetails theRequest) {
 		org.hl7.fhir.r4.model.Parameters retVal = super.doExpunge(theIdParam, theLimit, theExpungeDeletedResources, theExpungeOldVersions, null, theRequest);
 		try {
-			return VersionConvertor_30_40.convertParameters(retVal);
+			return new VersionConvertor_30_40().convertParameters(retVal);
 		} catch (FHIRException e) {
 			throw new InternalErrorException(e);
 		}
@@ -107,7 +107,7 @@ public class JpaResourceProviderDstu3<T extends IAnyResource> extends BaseJpaRes
 		RequestDetails theRequest) {
 		org.hl7.fhir.r4.model.Parameters retVal = super.doExpunge(null, theLimit, theExpungeDeletedResources, theExpungeOldVersions, null, theRequest);
 		try {
-			return VersionConvertor_30_40.convertParameters(retVal);
+			return new VersionConvertor_30_40().convertParameters(retVal);
 		} catch (FHIRException e) {
 			throw new InternalErrorException(e);
 		}

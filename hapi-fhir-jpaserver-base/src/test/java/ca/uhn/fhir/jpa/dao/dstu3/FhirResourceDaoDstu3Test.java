@@ -30,6 +30,7 @@ import org.hl7.fhir.dstu3.model.Observation.ObservationStatus;
 import org.hl7.fhir.dstu3.model.OperationOutcome.IssueSeverity;
 import org.hl7.fhir.dstu3.model.OperationOutcome.IssueType;
 import org.hl7.fhir.dstu3.model.Quantity.QuantityComparator;
+import org.hl7.fhir.exceptions.FHIRFormatError;
 import org.hl7.fhir.instance.model.api.IAnyResource;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
@@ -176,7 +177,7 @@ public class FhirResourceDaoDstu3Test extends BaseJpaDstu3Test {
 	}
 
 	@Test
-	public void testChoiceParamConcept() {
+	public void testChoiceParamConcept() throws FHIRFormatError{
 		Observation o1 = new Observation();
 		o1.getCode().addCoding().setSystem("foo").setCode("testChoiceParam01");
 		o1.setValue(newCodeableConcept("testChoiceParam01CCS", "testChoiceParam01CCV"));
@@ -190,7 +191,7 @@ public class FhirResourceDaoDstu3Test extends BaseJpaDstu3Test {
 	}
 
 	@Test
-	public void testChoiceParamDate() {
+	public void testChoiceParamDate() throws FHIRFormatError{
 		Observation o2 = new Observation();
 		o2.getCode().addCoding().setSystem("foo").setCode("testChoiceParam02");
 		o2.setValue(new Period().setStartElement(new DateTimeType("2001-01-01")).setEndElement(new DateTimeType("2001-01-03")));
@@ -204,7 +205,7 @@ public class FhirResourceDaoDstu3Test extends BaseJpaDstu3Test {
 	}
 
 	@Test
-	public void testChoiceParamDateAlt() {
+	public void testChoiceParamDateAlt() throws FHIRFormatError{
 		Observation o2 = new Observation();
 		o2.getCode().addCoding().setSystem("foo").setCode("testChoiceParamDateAlt02");
 		o2.setEffective(new DateTimeType("2015-03-08T11:11:11"));
@@ -249,7 +250,7 @@ public class FhirResourceDaoDstu3Test extends BaseJpaDstu3Test {
 	}
 
 	@Test
-	public void testChoiceParamDateRange() {
+	public void testChoiceParamDateRange() throws FHIRFormatError{
 		Observation o1 = new Observation();
 		o1.getCode().addCoding().setSystem("foo").setCode("testChoiceParamDateRange01");
 		o1.setEffective(new Period().setStartElement(new DateTimeType("2015-01-01T00:00:00Z")).setEndElement(new DateTimeType("2015-01-10T00:00:00Z")));
@@ -288,7 +289,7 @@ public class FhirResourceDaoDstu3Test extends BaseJpaDstu3Test {
 	}
 
 	@Test
-	public void testChoiceParamQuantity() {
+	public void testChoiceParamQuantity() throws FHIRFormatError{
 		Observation o3 = new Observation();
 		o3.getCode().addCoding().setSystem("foo").setCode("testChoiceParam03");
 		o3.setValue(new Quantity(QuantityComparator.GREATER_THAN, 123.0, "foo", "bar", "bar"));
@@ -347,7 +348,7 @@ public class FhirResourceDaoDstu3Test extends BaseJpaDstu3Test {
 	}
 
 	@Test
-	public void testChoiceParamQuantityPrecision() {
+	public void testChoiceParamQuantityPrecision() throws FHIRFormatError{
 		Observation o3 = new Observation();
 		o3.getCode().addCoding().setSystem("foo").setCode("testChoiceParam03");
 		o3.setValue(new Quantity(null, 123.01, "foo", "bar", "bar"));
@@ -386,7 +387,7 @@ public class FhirResourceDaoDstu3Test extends BaseJpaDstu3Test {
 	}
 
 	@Test
-	public void testChoiceParamString() {
+	public void testChoiceParamString() throws FHIRFormatError{
 
 		Observation o4 = new Observation();
 		o4.getCode().addCoding().setSystem("foo").setCode("testChoiceParam04");
@@ -744,7 +745,7 @@ public class FhirResourceDaoDstu3Test extends BaseJpaDstu3Test {
 	}
 
 	@Test
-	public void testCreateWithInvalid() {
+	public void testCreateWithInvalid() throws FHIRFormatError{
 		Observation o1 = new Observation();
 		o1.getCode().addCoding().setSystem("foo").setCode("testChoiceParam01");
 		o1.setValue(newCodeableConcept("testChoiceParam01CCS", "testChoiceParam01CCV"));
@@ -1780,7 +1781,7 @@ public class FhirResourceDaoDstu3Test extends BaseJpaDstu3Test {
 	}
 
 	@Test
-	public void testIndexConditionWithAllOnsetTypes() {
+	public void testIndexConditionWithAllOnsetTypes() throws FHIRFormatError {
 		// DateTimeType.class, Age.class, Period.class, Range.class, StringType.class
 
 		Condition c0 = new Condition();
@@ -2054,7 +2055,7 @@ public class FhirResourceDaoDstu3Test extends BaseJpaDstu3Test {
 	}
 
 	@Test
-	public void testPersistResourceLink() {
+	public void testPersistResourceLink() throws FHIRFormatError{
 		Patient patient = new Patient();
 		patient.addIdentifier().setSystem("urn:system").setValue("testPersistResourceLink01");
 		IIdType patientId01 = myPatientDao.create(patient, mySrd).getId();
@@ -2124,7 +2125,7 @@ public class FhirResourceDaoDstu3Test extends BaseJpaDstu3Test {
 	}
 
 	@Test
-	public void testPersistSearchParamObservationString() {
+	public void testPersistSearchParamObservationString() throws FHIRFormatError{
 		Observation obs = new Observation();
 		obs.getCode().addCoding().setSystem("foo").setCode("testPersistSearchParamQuantity");
 		obs.setValue(new StringType("AAAABBBB"));
@@ -2140,7 +2141,7 @@ public class FhirResourceDaoDstu3Test extends BaseJpaDstu3Test {
 	}
 
 	@Test
-	public void testPersistSearchParamQuantity() {
+	public void testPersistSearchParamQuantity() throws FHIRFormatError{
 		Observation obs = new Observation();
 		obs.getCode().addCoding().setSystem("foo").setCode("testPersistSearchParamQuantity");
 		obs.setValue(new Quantity(111));
@@ -2857,7 +2858,7 @@ public class FhirResourceDaoDstu3Test extends BaseJpaDstu3Test {
 	@Test
 	@Ignore
 
-	public void testSortByQuantity() {
+	public void testSortByQuantity() throws FHIRFormatError{
 		Observation res;
 
 		res = new Observation();
@@ -3462,7 +3463,7 @@ public class FhirResourceDaoDstu3Test extends BaseJpaDstu3Test {
 	 * Make sure this can upload successfully (indexer failed at one point)
 	 */
 	@Test
-	public void testUploadConsentWithSourceAttachment() {
+	public void testUploadConsentWithSourceAttachment() throws FHIRFormatError{
 		Consent consent = new Consent();
 		consent.setSource(new Attachment().setUrl("http://foo"));
 		myConsentDao.create(consent);

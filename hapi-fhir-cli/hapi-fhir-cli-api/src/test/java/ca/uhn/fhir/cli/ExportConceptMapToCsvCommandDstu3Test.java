@@ -14,6 +14,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.hl7.fhir.dstu3.model.ConceptMap;
 import org.hl7.fhir.dstu3.model.Enumerations.ConceptMapEquivalence;
 import org.hl7.fhir.dstu3.model.UriType;
+import org.hl7.fhir.exceptions.FHIRFormatError;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -109,10 +110,13 @@ public class ExportConceptMapToCsvCommandDstu3Test {
 
 	static ConceptMap createConceptMap() {
 		ConceptMap conceptMap = new ConceptMap();
-		conceptMap
-			.setUrl(CM_URL)
-			.setSource(new UriType(VS_URL_1))
-			.setTarget(new UriType(VS_URL_2));
+		try {
+			conceptMap
+				.setUrl(CM_URL)
+				.setSource(new UriType(VS_URL_1))
+				.setTarget(new UriType(VS_URL_2));
+		} catch (FHIRFormatError e) {
+		}
 
 		ConceptMap.ConceptMapGroupComponent group = conceptMap.addGroup();
 		group

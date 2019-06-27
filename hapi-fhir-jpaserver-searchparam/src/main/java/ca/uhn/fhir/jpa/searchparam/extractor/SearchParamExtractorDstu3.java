@@ -193,11 +193,15 @@ public class SearchParamExtractorDstu3 extends BaseSearchParamExtractor implemen
 						}
 					}
 					if (nextValue.getRepeat().hasBounds()) {
-						if (nextValue.getRepeat().getBoundsPeriod().getStart() != null) {
-							dates.add(nextValue.getRepeat().getBoundsPeriod().getStart());
-						}
-						if (nextValue.getRepeat().getBoundsPeriod().getEnd() != null) {
-							dates.add(nextValue.getRepeat().getBoundsPeriod().getEnd());
+						try {
+							if (nextValue.getRepeat().getBoundsPeriod().getStart() != null) {
+								dates.add(nextValue.getRepeat().getBoundsPeriod().getStart());
+							}
+							if (nextValue.getRepeat().getBoundsPeriod().getEnd() != null) {
+								dates.add(nextValue.getRepeat().getBoundsPeriod().getEnd());
+							}
+						} catch (FHIRException e) {
+							e.printStackTrace();
 						}
 					}
 					if (dates.isEmpty()) {

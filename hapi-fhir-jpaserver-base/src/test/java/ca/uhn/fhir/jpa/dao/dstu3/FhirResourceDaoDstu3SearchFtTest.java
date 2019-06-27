@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import ca.uhn.fhir.jpa.dao.BaseHapiFhirResourceDao;
 import org.hl7.fhir.dstu3.model.*;
 import org.hl7.fhir.dstu3.model.Observation.ObservationStatus;
+import org.hl7.fhir.exceptions.FHIRFormatError;
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.junit.*;
 
@@ -37,7 +38,7 @@ public class FhirResourceDaoDstu3SearchFtTest extends BaseJpaDstu3Test {
 
 
 	@Test
-	public void testCodeTextSearch() {
+	public void testCodeTextSearch() throws FHIRFormatError{
 		Observation obs1 = new Observation();
 		obs1.getCode().setText("Systolic Blood Pressure");
 		obs1.setStatus(ObservationStatus.FINAL);
@@ -74,7 +75,7 @@ public class FhirResourceDaoDstu3SearchFtTest extends BaseJpaDstu3Test {
 
 
 	@Test
-	public void testResourceTextSearch() {
+	public void testResourceTextSearch() throws FHIRFormatError{
 		Observation obs1 = new Observation();
 		obs1.getCode().setText("Systolic Blood Pressure");
 		obs1.setStatus(ObservationStatus.FINAL);
@@ -110,7 +111,7 @@ public class FhirResourceDaoDstu3SearchFtTest extends BaseJpaDstu3Test {
 
 	@Test
 	@Ignore
-	public void testStringTextSearch() {
+	public void testStringTextSearch() throws FHIRFormatError{
 		Observation obs1 = new Observation();
 		obs1.getCode().setText("AAAAA");
 		obs1.setValue(new StringType("Systolic Blood Pressure"));
@@ -288,7 +289,7 @@ public class FhirResourceDaoDstu3SearchFtTest extends BaseJpaDstu3Test {
 	}
 
 	@Test
-	public void testEverythingInstanceWithContentFilter() {
+	public void testEverythingInstanceWithContentFilter() throws FHIRFormatError{
 		Patient pt1 = new Patient();
 		pt1.addName().setFamily("Everything").addGiven("Arthur");
 		IIdType ptId1 = myPatientDao.create(pt1, mockSrd()).getId().toUnqualifiedVersionless();
@@ -381,7 +382,7 @@ public class FhirResourceDaoDstu3SearchFtTest extends BaseJpaDstu3Test {
 	}
 	
 	@Test
-	public void testEverythingTypeWithContentFilter() {
+	public void testEverythingTypeWithContentFilter() throws FHIRFormatError{
 		Patient pt1 = new Patient();
 		pt1.addName().setFamily("Everything").addGiven("Arthur");
 		IIdType ptId1 = myPatientDao.create(pt1, mockSrd()).getId().toUnqualifiedVersionless();
@@ -530,7 +531,7 @@ public class FhirResourceDaoDstu3SearchFtTest extends BaseJpaDstu3Test {
 	}
 
 	@Test
-	public void testSearchWithChainedParams() {
+	public void testSearchWithChainedParams() throws FHIRFormatError{
 		String methodName = "testSearchWithChainedParams";
 		IIdType pId1;
 		{

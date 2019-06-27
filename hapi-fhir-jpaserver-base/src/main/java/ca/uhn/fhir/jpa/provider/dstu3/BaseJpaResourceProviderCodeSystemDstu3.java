@@ -58,7 +58,7 @@ public class BaseJpaResourceProviderCodeSystemDstu3 extends JpaResourceProviderD
 			LookupCodeResult result = dao.lookupCode(theCode, theSystem, theCoding, theRequestDetails);
 			result.throwNotFoundIfAppropriate();
 			org.hl7.fhir.r4.model.Parameters parametersR4 = result.toParameters(theProperties);
-			return VersionConvertor_30_40.convertParameters(parametersR4);
+			return new VersionConvertor_30_40().convertParameters(parametersR4);
 		} catch (FHIRException e) {
 			throw new InternalErrorException(e);
 		} finally {

@@ -77,10 +77,10 @@
 					</execution>
 				</executions>
 				<configuration>
-					<printEqualFiles>false</printEqualFiles>
-					<failBuildInCaseOfDifferentContentConflict>true</failBuildInCaseOfDifferentContentConflict>
-					<failBuildInCaseOfEqualContentConflict>true</failBuildInCaseOfEqualContentConflict>
-					<failBuildInCaseOfConflict>true</failBuildInCaseOfConflict>
+					<printEqualFiles>true</printEqualFiles>
+					<failBuildInCaseOfDifferentContentConflict>false</failBuildInCaseOfDifferentContentConflict>
+					<failBuildInCaseOfEqualContentConflict>false</failBuildInCaseOfEqualContentConflict>
+					<failBuildInCaseOfConflict>false</failBuildInCaseOfConflict>
 					<checkCompileClasspath>true</checkCompileClasspath>
 					<checkRuntimeClasspath>false</checkRuntimeClasspath>
 					<checkTestClasspath>false</checkTestClasspath>

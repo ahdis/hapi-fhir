@@ -1,11 +1,16 @@
 package ca.uhn.fhir.rest.server;
 
-import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.model.api.Include;
-import ca.uhn.fhir.rest.annotation.*;
-import ca.uhn.fhir.rest.api.EncodingEnum;
-import ca.uhn.fhir.util.TestUtil;
-import com.google.common.base.Charsets;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -15,23 +20,42 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.hl7.fhir.exceptions.FHIRException;
 import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r4.model.*;
-import org.junit.*;
+import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.DiagnosticReport;
+import org.hl7.fhir.r4.model.IdType;
+import org.hl7.fhir.r4.model.Observation;
+import org.hl7.fhir.r4.model.Patient;
+import org.hl7.fhir.r4.model.Procedure;
+import org.hl7.fhir.r4.model.Quantity;
+import org.hl7.fhir.r4.model.Reference;
+import org.hl7.fhir.r4.model.StringType;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
+import com.google.common.base.Charsets;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-
+import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.model.api.Include;
+import ca.uhn.fhir.rest.annotation.Elements;
+import ca.uhn.fhir.rest.annotation.IdParam;
+import ca.uhn.fhir.rest.annotation.IncludeParam;
+import ca.uhn.fhir.rest.annotation.Read;
+import ca.uhn.fhir.rest.annotation.Search;
+import ca.uhn.fhir.rest.api.EncodingEnum;
 import ca.uhn.fhir.test.utilities.JettyUtil;
+import ca.uhn.fhir.util.TestUtil;
 
 public class ElementsParamR4Test {
+	
+	@FunctionalInterface
+	public interface ConsumerWithFHIRException<T> {
+	   void accept(T t) throws FHIRException;
+	}	
 
 	private static final org.slf4j.Logger ourLog = org.slf4j.LoggerFactory.getLogger(ElementsParamR4Test.class);
 	private static CloseableHttpClient ourClient;
@@ -51,7 +75,7 @@ public class ElementsParamR4Test {
 	}
 
 	@Test
-	public void testElementsOnChoiceWithGenericName() throws IOException {
+	public void testElementsOnChoiceWithGenericName() throws FHIRException, IOException {
 		createObservationWithQuantity();
 		verifyXmlAndJson(
 			"http://localhost:" + ourPort + "/Observation?_elements=value,status",
@@ -65,7 +89,7 @@ public class ElementsParamR4Test {
 	}
 
 	@Test
-	public void testElementsOnChoiceWithSpecificName() throws IOException {
+	public void testElementsOnChoiceWithSpecificName() throws FHIRException, IOException {
 		createObservationWithQuantity();
 		verifyXmlAndJson(
 			"http://localhost:" + ourPort + "/Observation?_elements=valueQuantity,status",
@@ -80,7 +104,7 @@ public class ElementsParamR4Test {
 
 	@Test
 	@Ignore
-	public void testElementsOnChoiceWithSpecificNameNotMatching() throws IOException {
+	public void testElementsOnChoiceWithSpecificNameNotMatching() throws FHIRException, IOException {
 		createObservationWithQuantity();
 		verifyXmlAndJson(
 			"http://localhost:" + ourPort + "/Observation?_elements=valueString,status",
@@ -93,7 +117,7 @@ public class ElementsParamR4Test {
 	}
 
 	@Test
-	public void testExcludeResources() throws IOException {
+	public void testExcludeResources() throws FHIRException, IOException {
 		createProcedureWithLongChain();
 		verifyXmlAndJson(
 			"http://localhost:" + ourPort + "/Procedure?_include=*&_elements:exclude=Procedure,DiagnosticReport,*.meta",
@@ -204,7 +228,7 @@ public class ElementsParamR4Test {
 	 * and not any included resources
 	 */
 	@Test
-	public void testStandardElementsFilter() throws IOException {
+	public void testStandardElementsFilter() throws FHIRException, IOException {
 		createProcedureWithLongChain();
 		verifyXmlAndJson(
 			"http://localhost:" + ourPort + "/Procedure?_include=*&_elements=reasonCode,status",
@@ -226,7 +250,7 @@ public class ElementsParamR4Test {
 	}
 
 	@Test
-	public void testMultiResourceElementsFilter() throws IOException {
+	public void testMultiResourceElementsFilter() throws FHIRException, IOException {
 		createProcedureWithLongChain();
 		verifyXmlAndJson(
 			"http://localhost:" + ourPort + "/Procedure?_include=*&_elements=Procedure.reasonCode,Observation.status,Observation.subject,Observation.value",
@@ -248,7 +272,7 @@ public class ElementsParamR4Test {
 	}
 
 	@Test
-	public void testMultiResourceElementsOnExtension() throws IOException {
+	public void testMultiResourceElementsOnExtension() throws FHIRException, IOException {
 		ourNextProcedure = new Procedure();
 		ourNextProcedure.setId("Procedure/PROC");
 		ourNextProcedure.addExtension()
@@ -284,7 +308,7 @@ public class ElementsParamR4Test {
 	}
 
 	@Test
-	public void testMultiResourceElementsFilterWithMetadataExcluded() throws IOException {
+	public void testMultiResourceElementsFilterWithMetadataExcluded() throws FHIRException, IOException {
 		createProcedureWithLongChain();
 		verifyXmlAndJson(
 			"http://localhost:" + ourPort + "/Procedure?_include=*&_elements=Procedure.reasonCode,Observation.status,Observation.subject,Observation.value&_elements:exclude=*.meta",
@@ -310,7 +334,7 @@ public class ElementsParamR4Test {
 	 * on other resources but Procedure, should not affect the output of the procedure resource.
 	 */
 	@Test
-	public void testMultiResourceElementsFilterDoesntAffectFocalResource() throws IOException {
+	public void testMultiResourceElementsFilterDoesntAffectFocalResource() throws FHIRException, IOException {
 		createProcedureWithLongChain();
 		verifyXmlAndJson(
 			"http://localhost:" + ourPort + "/Procedure?_include=*&_elements=Observation.subject",
@@ -334,7 +358,7 @@ public class ElementsParamR4Test {
 	}
 
 	@Test
-	public void testMultiResourceElementsFilterWithMetadataExcludedStandardMode() throws IOException {
+	public void testMultiResourceElementsFilterWithMetadataExcludedStandardMode() throws FHIRException, IOException {
 		ourServlet.setElementsSupport(ElementsSupportEnum.STANDARD);
 		createProcedureWithLongChain();
 		verifyXmlAndJson(
@@ -358,7 +382,7 @@ public class ElementsParamR4Test {
 	}
 
 	@Test
-	public void testElementsFilterWithComplexPath() throws IOException {
+	public void testElementsFilterWithComplexPath() throws FHIRException, IOException {
 		createProcedureWithLongChain();
 		verifyXmlAndJson(
 			"http://localhost:" + ourPort + "/Procedure?_elements=Procedure.reasonCode.coding.code",
@@ -391,11 +415,11 @@ public class ElementsParamR4Test {
 		dr.addResult().setResource(obs);
 	}
 
-	private void verifyXmlAndJson(String theUri, Consumer<Bundle> theVerifier) throws IOException {
+	private void verifyXmlAndJson(String theUri, ConsumerWithFHIRException<Bundle> theVerifier) throws FHIRException, IOException {
 		verifyXmlAndJson(theUri, Bundle.class, theVerifier);
 	}
 
-	private <T extends IBaseResource> void verifyXmlAndJson(String theUri, Class<T> theType, Consumer<T> theVerifier) throws IOException {
+	private <T extends IBaseResource> void verifyXmlAndJson(String theUri, Class<T> theType, ConsumerWithFHIRException<T> theVerifier) throws FHIRException, IOException {
 		EncodingEnum encodingEnum;
 		HttpGet httpGet;
 

@@ -154,7 +154,7 @@ public class ImportCsvToConceptMapCommand extends AbstractImportExportCsvConcept
 
 	private org.hl7.fhir.dstu3.model.ConceptMap convertCsvToConceptMapDstu3() throws ExecutionException {
 		try {
-			return VersionConvertor_30_40.convertConceptMap(convertCsvToConceptMapR4());
+			return new VersionConvertor_30_40().convertConceptMap(convertCsvToConceptMapR4());
 		} catch (FHIRException fe) {
 			throw new ExecutionException(fe);
 		}

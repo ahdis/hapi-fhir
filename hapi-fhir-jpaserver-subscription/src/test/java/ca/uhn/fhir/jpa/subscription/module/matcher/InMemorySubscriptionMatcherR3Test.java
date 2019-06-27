@@ -7,6 +7,7 @@ import ca.uhn.fhir.rest.api.server.IBundleProvider;
 import ca.uhn.fhir.rest.server.SimpleBundleProvider;
 import org.hl7.fhir.dstu3.model.*;
 import org.hl7.fhir.dstu3.model.codesystems.MedicationRequestCategory;
+import org.hl7.fhir.exceptions.FHIRFormatError;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.instance.model.api.IIdType;
 import org.junit.Test;
@@ -119,7 +120,7 @@ public class InMemorySubscriptionMatcherR3Test extends BaseSubscriptionDstu3Test
 	}
 
 	@Test
-	public void testCommunicationRequest() {
+	public void testCommunicationRequest() throws FHIRFormatError {
 		String criteria = "CommunicationRequest?occurrence==2018-10-17";
 
 		{
@@ -450,7 +451,7 @@ public class InMemorySubscriptionMatcherR3Test extends BaseSubscriptionDstu3Test
 	}
 
 	@Test
-	public void testProcedureRequestCategory() {
+	public void testProcedureRequestCategory() throws FHIRFormatError {
 		String criteria = "ProcedureRequest?intent=instance-order&category=Laboratory,Ancillary%20Orders,Hemodialysis&occurrence==2018-10-19";
 
 		SearchParameter sp = new SearchParameter();
@@ -544,7 +545,7 @@ public class InMemorySubscriptionMatcherR3Test extends BaseSubscriptionDstu3Test
 	}
 
 	@Test
-	public void testCommunicationRequestWithRefAndDate() {
+	public void testCommunicationRequestWithRefAndDate() throws FHIRFormatError {
 		String criteria = "CommunicationRequest?requester=O1271,O1276&occurrence=ge2019-02-08T00:00:00-05:00&occurrence=le2019-02-09T00:00:00-05:00";
 		CommunicationRequest cr = new CommunicationRequest();
 		cr.getRequester().getAgent().setReference("Organization/O1276");

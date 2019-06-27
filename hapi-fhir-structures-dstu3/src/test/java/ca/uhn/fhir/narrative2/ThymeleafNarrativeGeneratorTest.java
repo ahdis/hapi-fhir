@@ -3,6 +3,7 @@ package ca.uhn.fhir.narrative2;
 import ca.uhn.fhir.context.FhirContext;
 import org.hamcrest.Matchers;
 import org.hl7.fhir.dstu3.model.*;
+import org.hl7.fhir.exceptions.FHIRFormatError;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +20,7 @@ public class ThymeleafNarrativeGeneratorTest {
 	private FhirContext myCtx = FhirContext.forDstu3();
 
 	@Test
-	public void testGenerateCompositionWithContextPath() throws IOException {
+	public void testGenerateCompositionWithContextPath() throws FHIRFormatError, IOException {
 		DiagnosticReport dr1 = new DiagnosticReport();
 		dr1.setStatus(DiagnosticReport.DiagnosticReportStatus.FINAL);
 		dr1.setIssuedElement(new InstantType("2019-01-01T12:12:12-05:00"));
@@ -58,7 +59,7 @@ public class ThymeleafNarrativeGeneratorTest {
 		ref.setReference("DiagnosticReport/1").setResource(dr1);
 		sect.getEntry().add(ref);
 
-		NarrativeTemplateManifest manifest = NarrativeTemplateManifest.forManifestFileLocation("classpath:narrative2/narratives.properties");
+ 		NarrativeTemplateManifest manifest = NarrativeTemplateManifest.forManifestFileLocation("classpath:narrative2/narratives.properties");
 		ThymeleafNarrativeGenerator gen = new ThymeleafNarrativeGenerator();
 		gen.setManifest(manifest);
 
