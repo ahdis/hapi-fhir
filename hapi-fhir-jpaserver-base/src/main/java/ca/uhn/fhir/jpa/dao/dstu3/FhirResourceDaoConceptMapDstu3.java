@@ -164,13 +164,7 @@ public class FhirResourceDaoConceptMapDstu3 extends BaseHapiFhirResourceDao<Conc
 
 		if (!retVal.isUnchangedInCurrentOperation()) {
 			if (retVal.getDeleted() == null) {
-				try {
-					ConceptMap conceptMap = (ConceptMap) theResource;
-					org.hl7.fhir.r4.model.ConceptMap converted = VersionConvertor_30_40.convertConceptMap(conceptMap);
-					myHapiTerminologySvc.storeTermConceptMapAndChildren(retVal, converted);
-				} catch (FHIRException fe) {
-					throw new InternalErrorException(fe);
-				}
+			  return null;
 			} else {
 				myHapiTerminologySvc.deleteConceptMapAndChildren(retVal);
 			}

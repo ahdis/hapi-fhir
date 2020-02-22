@@ -16,7 +16,6 @@ import ca.uhn.fhir.jpa.model.sched.ISchedulerService;
 import ca.uhn.fhir.jpa.provider.SubscriptionTriggeringProvider;
 import ca.uhn.fhir.jpa.provider.TerminologyUploaderProvider;
 import ca.uhn.fhir.jpa.sched.AutowiringSpringBeanJobFactory;
-import ca.uhn.fhir.jpa.sched.HapiSchedulerServiceImpl;
 import ca.uhn.fhir.jpa.search.DatabaseBackedPagingProvider;
 import ca.uhn.fhir.jpa.search.IStaleSearchDeletingSvc;
 import ca.uhn.fhir.jpa.search.StaleSearchDeletingSvcImpl;
@@ -224,7 +223,7 @@ public abstract class BaseConfig {
 		return new PersistenceExceptionTranslationPostProcessor();
 	}
 
-	@Bean
+	@Bean(name = "myJpaInterceptorService")
 	public IInterceptorService jpaInterceptorService() {
 		return new InterceptorService();
 	}
@@ -246,11 +245,6 @@ public abstract class BaseConfig {
 	public TerminologyUploaderProvider terminologyUploaderProvider() {
 		TerminologyUploaderProvider retVal = new TerminologyUploaderProvider();
 		return retVal;
-	}
-
-	@Bean
-	public ISchedulerService schedulerService() {
-		return new HapiSchedulerServiceImpl().setDefaultGroup(HAPI_DEFAULT_SCHEDULER_GROUP);
 	}
 
 	@Bean

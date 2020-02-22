@@ -27,11 +27,11 @@ import java.nio.charset.Charset;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import ca.uhn.fhir.interceptor.api.Hook;
-import ca.uhn.fhir.interceptor.api.Pointcut;
 import org.hl7.fhir.instance.model.api.IBaseOperationOutcome;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 
+import ca.uhn.fhir.interceptor.api.Hook;
+import ca.uhn.fhir.interceptor.api.Pointcut;
 import ca.uhn.fhir.rest.api.EncodingEnum;
 import ca.uhn.fhir.rest.api.server.RequestDetails;
 import ca.uhn.fhir.rest.server.RestfulServerUtils;
@@ -40,6 +40,7 @@ import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 import ca.uhn.fhir.rest.server.method.ResourceParameter;
 import ca.uhn.fhir.validation.FhirValidator;
 import ca.uhn.fhir.validation.ResultSeverityEnum;
+import ca.uhn.fhir.validation.ValidationOptions;
 import ca.uhn.fhir.validation.ValidationResult;
 
 /**
@@ -65,8 +66,9 @@ public class RequestValidatingInterceptor extends BaseValidatingInterceptor<Stri
 	private boolean myAddValidationResultsToResponseOperationOutcome = true;
 
 	@Override
-	ValidationResult doValidate(FhirValidator theValidator, String theRequest) {
-		return theValidator.validateWithResult(theRequest);
+  protected
+	ValidationResult doValidate(FhirValidator theValidator, String theRequest, ValidationOptions options) {
+		return theValidator.validateWithResult(theRequest, options);
 	}
 
 	@Hook(Pointcut.SERVER_INCOMING_REQUEST_POST_PROCESSED)
@@ -124,6 +126,7 @@ public class RequestValidatingInterceptor extends BaseValidatingInterceptor<Stri
 	}
 
 	@Override
+  protected
 	String provideDefaultResponseHeaderName() {
 		return DEFAULT_RESPONSE_HEADER_NAME;
 	}

@@ -420,8 +420,7 @@ public class FhirResourceDaoValueSetDstu3 extends BaseHapiFhirResourceDao<ValueS
 			if (retVal.getDeleted() == null) {
 				try {
 					ValueSet valueSet = (ValueSet) theResource;
-					org.hl7.fhir.r4.model.ValueSet converted = VersionConvertor_30_40.convertValueSet(valueSet);
-					myHapiTerminologySvc.storeTermValueSet(retVal, converted);
+	        return null;
 				} catch (FHIRException fe) {
 					throw new InternalErrorException(fe);
 				}

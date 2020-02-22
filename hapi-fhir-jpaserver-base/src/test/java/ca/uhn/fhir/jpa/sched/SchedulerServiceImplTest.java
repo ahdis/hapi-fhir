@@ -33,7 +33,6 @@ import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
-@ContextConfiguration(classes = SchedulerServiceImplTest.TestConfiguration.class)
 @RunWith(SpringJUnit4ClassRunner.class)
 @DirtiesContext
 public class SchedulerServiceImplTest {
@@ -62,28 +61,6 @@ public class SchedulerServiceImplTest {
 		ourLog.info("Fired {} times", CountingJob.ourCount);
 
 		assertThat(CountingJob.ourCount, greaterThan(3));
-		assertThat(CountingJob.ourCount, lessThan(20));
-	}
-
-	@Test
-	public void testStopAndStartService() throws SchedulerException {
-
-		ScheduledJobDefinition def = new ScheduledJobDefinition()
-			.setId(CountingJob.class.getName())
-			.setJobClass(CountingJob.class);
-
-		BaseSchedulerServiceImpl svc = AopTestUtils.getTargetObject(mySvc);
-		svc.stop();
-		svc.create();
-		svc.start();
-
-		mySvc.scheduleLocalJob(100, def);
-
-		sleepAtLeast(1000);
-
-		ourLog.info("Fired {} times", CountingJob.ourCount);
-
-		await().until(() -> CountingJob.ourCount, greaterThan(3));
 		assertThat(CountingJob.ourCount, lessThan(20));
 	}
 
@@ -179,25 +156,5 @@ public class SchedulerServiceImplTest {
 			sleepAtLeast(ourTaskDelay);
 			ourCount++;
 		}
-	}
-
-	@Configuration
-	public static class TestConfiguration {
-
-		@Bean
-		public ISchedulerService schedulerService() {
-			return new HapiSchedulerServiceImpl();
-		}
-
-		@Bean
-		public String stringBean() {
-			return "String beans are good.";
-		}
-
-		@Bean
-		public AutowiringSpringBeanJobFactory springBeanJobFactory() {
-			return new AutowiringSpringBeanJobFactory();
-		}
-
 	}
 }

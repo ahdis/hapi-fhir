@@ -103,8 +103,7 @@ public class TermReadSvcDstu3 extends BaseTermReadSvcImpl implements IValidation
 		try {
 			org.hl7.fhir.r4.model.ValueSet valueSetToExpandR4;
 			valueSetToExpandR4 = toCanonicalValueSet(valueSetToExpand);
-			org.hl7.fhir.r4.model.ValueSet.ValueSetExpansionComponent expandedR4 = super.expandValueSetInMemory(valueSetToExpandR4, null).getExpansion();
-			return VersionConvertor_30_40.convertValueSetExpansionComponent(expandedR4);
+      return null;
 		} catch (FHIRException e) {
 			throw new InternalErrorException(e);
 		}
@@ -118,7 +117,7 @@ public class TermReadSvcDstu3 extends BaseTermReadSvcImpl implements IValidation
 			org.hl7.fhir.r4.model.ValueSet valueSetToExpandR4;
 			valueSetToExpandR4 = toCanonicalValueSet(valueSetToExpand);
 			org.hl7.fhir.r4.model.ValueSet expandedR4 = super.expandValueSetInMemory(valueSetToExpandR4, null);
-			return VersionConvertor_30_40.convertValueSet(expandedR4);
+      return null;
 		} catch (FHIRException e) {
 			throw new InternalErrorException(e);
 		}
@@ -127,8 +126,7 @@ public class TermReadSvcDstu3 extends BaseTermReadSvcImpl implements IValidation
 	@Override
 	protected org.hl7.fhir.r4.model.ValueSet toCanonicalValueSet(IBaseResource theValueSet) throws FHIRException {
 		org.hl7.fhir.r4.model.ValueSet valueSetToExpandR4;
-		valueSetToExpandR4 = VersionConvertor_30_40.convertValueSet((ValueSet) theValueSet);
-		return valueSetToExpandR4;
+    return null;
 	}
 
 	@Override
@@ -139,7 +137,7 @@ public class TermReadSvcDstu3 extends BaseTermReadSvcImpl implements IValidation
 			org.hl7.fhir.r4.model.ValueSet valueSetToExpandR4;
 			valueSetToExpandR4 = toCanonicalValueSet(valueSetToExpand);
 			org.hl7.fhir.r4.model.ValueSet expandedR4 = super.expandValueSet(valueSetToExpandR4, theOffset, theCount);
-			return VersionConvertor_30_40.convertValueSet(expandedR4);
+      return null;
 		} catch (FHIRException e) {
 			throw new InternalErrorException(e);
 		}
@@ -254,12 +252,7 @@ public class TermReadSvcDstu3 extends BaseTermReadSvcImpl implements IValidation
 
 	@Override
 	public org.hl7.fhir.r4.model.CodeSystem getCodeSystemFromContext(String theSystem) {
-		CodeSystem codeSystem = myValidationSupport.fetchCodeSystem(myContext, theSystem);
-		try {
-			return VersionConvertor_30_40.convertCodeSystem(codeSystem);
-		} catch (FHIRException e) {
-			throw new InternalErrorException(e);
-		}
+    return null;
 	}
 
 	@Override
@@ -323,31 +316,14 @@ public class TermReadSvcDstu3 extends BaseTermReadSvcImpl implements IValidation
 	public ValidateCodeResult validateCodeIsInPreExpandedValueSet(IBaseResource theValueSet, String theSystem, String theCode, String theDisplay, IBaseDatatype theCoding, IBaseDatatype theCodeableConcept) {
 		ValidateUtil.isNotNullOrThrowUnprocessableEntity(theValueSet, "ValueSet must not be null");
 		ValueSet valueSet = (ValueSet) theValueSet;
-		org.hl7.fhir.r4.model.ValueSet valueSetR4 = VersionConvertor_30_40.convertValueSet(valueSet);
+    return null;
 
-		Coding coding = (Coding) theCoding;
-		org.hl7.fhir.r4.model.Coding codingR4 = null;
-		if (coding != null) {
-			codingR4 = new org.hl7.fhir.r4.model.Coding(coding.getSystem(), coding.getCode(), coding.getDisplay());
-		}
-
-		CodeableConcept codeableConcept = (CodeableConcept) theCodeableConcept;
-		org.hl7.fhir.r4.model.CodeableConcept codeableConceptR4 = null;
-		if (codeableConcept != null) {
-			codeableConceptR4 = new org.hl7.fhir.r4.model.CodeableConcept();
-			for (Coding nestedCoding : codeableConcept.getCoding()) {
-				codeableConceptR4.addCoding(new org.hl7.fhir.r4.model.Coding(nestedCoding.getSystem(), nestedCoding.getCode(), nestedCoding.getDisplay()));
-			}
-		}
-
-		return super.validateCodeIsInPreExpandedValueSet(valueSetR4, theSystem, theCode, theDisplay, codingR4, codeableConceptR4);
 	}
 
 	@Override
 	public boolean isValueSetPreExpandedForCodeValidation(IBaseResource theValueSet) {
 		ValidateUtil.isNotNullOrThrowUnprocessableEntity(theValueSet, "ValueSet must not be null");
 		ValueSet valueSet = (ValueSet) theValueSet;
-		org.hl7.fhir.r4.model.ValueSet valueSetR4 = VersionConvertor_30_40.convertValueSet(valueSet);
-		return super.isValueSetPreExpandedForCodeValidation(valueSetR4);
+    return false;
 	}
 }

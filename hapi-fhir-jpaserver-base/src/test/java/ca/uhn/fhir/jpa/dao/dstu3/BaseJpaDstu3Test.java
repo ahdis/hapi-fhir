@@ -385,11 +385,7 @@ public abstract class BaseJpaDstu3Test extends BaseJpaTest {
 	 * @return A {@link org.hl7.fhir.dstu3.model.ConceptMap} entity for testing.
 	 */
 	public static ConceptMap createConceptMap() {
-		try {
-			return VersionConvertor_30_40.convertConceptMap(BaseJpaR4Test.createConceptMap());
-		} catch (FHIRException fe) {
-			throw new InternalErrorException(fe);
-		}
+    return null;
 	}
 
 	public static String toSearchUuidFromLinkNext(Bundle theBundle) {

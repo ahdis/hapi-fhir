@@ -129,7 +129,7 @@ public class BaseJpaResourceProviderConceptMapDstu3 extends JpaResourceProviderD
 			TranslationResult result = dao.translate(translationRequest, theRequestDetails);
 
 			// Convert from R4 to DSTU3
-			return VersionConvertor_30_40.convertParameters(result.toParameters());
+      return null;
 		} catch (FHIRException fe) {
 			throw new InternalErrorException(fe);
 		} finally {

@@ -66,7 +66,7 @@ public abstract class BaseValidatingInterceptor<T> {
 	private String myResponseIssueHeaderValue = DEFAULT_RESPONSE_HEADER_VALUE;
 	private String myResponseIssueHeaderValueNoIssues = null;
 	private String myResponseOutcomeHeaderName = provideDefaultResponseHeaderName();
-
+	
 	private List<IValidatorModule> myValidatorModules;
 
 	private void addResponseIssueHeader(RequestDetails theRequestDetails, SingleValidationMessage theNext) {
@@ -90,7 +90,7 @@ public abstract class BaseValidatingInterceptor<T> {
 		return this;
 	}
 
-	abstract ValidationResult doValidate(FhirValidator theValidator, T theRequest);
+	protected abstract ValidationResult doValidate(FhirValidator theValidator, T theRequest, ValidationOptions options);
 
 	/**
 	 * Fail the request by throwing an {@link UnprocessableEntityException} as a result of a validation failure.
@@ -140,7 +140,7 @@ public abstract class BaseValidatingInterceptor<T> {
 		return myIgnoreValidatorExceptions;
 	}
 
-	abstract String provideDefaultResponseHeaderName();
+	protected abstract String provideDefaultResponseHeaderName();
 
 	/**
 	 * Sets the minimum severity at which an issue detected by the validator will result in a header being added to the
@@ -289,9 +289,15 @@ public abstract class BaseValidatingInterceptor<T> {
 			return null;
 		}
 
+		ValidationOptions options = new ValidationOptions();
+		String[] profiles = theRequestDetails.getParameters().get("profile");
+		if (profiles!=null && profiles.length>0) {
+		  options.addProfile(profiles[0]);
+		}
+				    
 		ValidationResult validationResult;
 		try {
-			validationResult = doValidate(validator, theRequest);
+			validationResult = doValidate(validator, theRequest, options);
 		} catch (Exception e) {
 			if (myIgnoreValidatorExceptions) {
 				ourLog.warn("Validator threw an exception during validation", e);

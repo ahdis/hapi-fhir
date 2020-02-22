@@ -9,7 +9,7 @@
 	</parent>
 
 	<artifactId>hapi-fhir-testpage-overlay</artifactId>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 
 	<name>HAPI FHIR TestPage Overlay</name>
 

@@ -72,7 +72,7 @@ public class JpaSystemProviderDstu3 extends BaseJpaSystemProviderDstu2Plus<Bundl
 	) {
 		org.hl7.fhir.r4.model.Parameters retVal = super.doExpunge(theLimit, theExpungeDeletedResources, theExpungeOldVersions, theExpungeEverything, theRequestDetails);
 		try {
-			return VersionConvertor_30_40.convertParameters(retVal);
+      return null;
 		} catch (FHIRException e) {
 			throw new InternalErrorException(e);
 		}
@@ -90,7 +90,7 @@ public class JpaSystemProviderDstu3 extends BaseJpaSystemProviderDstu2Plus<Bundl
 	) {
 		org.hl7.fhir.r4.model.Parameters retVal = super.doExpunge(theLimit, theExpungeDeletedResources, theExpungeOldVersions, theExpungeEverything, theRequestDetails);
 		try {
-			return VersionConvertor_30_40.convertParameters(retVal);
+      return null;
 		} catch (FHIRException e) {
 			throw new InternalErrorException(e);
 		}

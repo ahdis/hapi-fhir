@@ -70,52 +70,18 @@ public class TermVersionAdapterSvcDstu3 extends BaseTermVersionAdapterSvcImpl im
 
 		@Override
 	public IIdType createOrUpdateCodeSystem(org.hl7.fhir.r4.model.CodeSystem theCodeSystemResource) {
-		CodeSystem resourceToStore;
-		try {
-			resourceToStore = VersionConvertor_30_40.convertCodeSystem(theCodeSystemResource);
-		} catch (FHIRException e) {
-			throw new InternalErrorException(e);
-		}
-		validateCodeSystemForStorage(theCodeSystemResource);
-		if (isBlank(resourceToStore.getIdElement().getIdPart())) {
-			String matchUrl = "CodeSystem?url=" + UrlUtil.escapeUrlParam(theCodeSystemResource.getUrl());
-			return myCodeSystemResourceDao.update(resourceToStore, matchUrl).getId();
-		} else {
-			return myCodeSystemResourceDao.update(resourceToStore).getId();
-		}
+      return null;
 	}
 
 	@Override
 	public void createOrUpdateConceptMap(org.hl7.fhir.r4.model.ConceptMap theConceptMap) {
-		ConceptMap resourceToStore;
-		try {
-			resourceToStore = VersionConvertor_30_40.convertConceptMap(theConceptMap);
-		} catch (FHIRException e) {
-			throw new InternalErrorException(e);
-		}
-		if (isBlank(resourceToStore.getIdElement().getIdPart())) {
-			String matchUrl = "ConceptMap?url=" + UrlUtil.escapeUrlParam(theConceptMap.getUrl());
-			myConceptMapResourceDao.update(resourceToStore, matchUrl);
-		} else {
-			myConceptMapResourceDao.update(resourceToStore);
-		}
+	  return;
 	}
 
 	@Override
 	public void createOrUpdateValueSet(org.hl7.fhir.r4.model.ValueSet theValueSet) {
 		ValueSet valueSetDstu3;
-		try {
-			valueSetDstu3 = VersionConvertor_30_40.convertValueSet(theValueSet);
-		} catch (FHIRException e) {
-			throw new InternalErrorException(e);
-		}
-
-		if (isBlank(valueSetDstu3.getIdElement().getIdPart())) {
-			String matchUrl = "ValueSet?url=" + UrlUtil.escapeUrlParam(theValueSet.getUrl());
-			myValueSetResourceDao.update(valueSetDstu3, matchUrl);
-		} else {
-			myValueSetResourceDao.update(valueSetDstu3);
-		}
+    return;
 	}
 
 }
