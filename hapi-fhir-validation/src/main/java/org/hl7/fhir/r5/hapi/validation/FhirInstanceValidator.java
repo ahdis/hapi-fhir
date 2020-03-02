@@ -41,6 +41,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -695,6 +696,18 @@ public class FhirInstanceValidator extends org.hl7.fhir.r5.hapi.validation.BaseV
 			org.hl7.fhir.r5.context.IWorkerContext.ValidationResult result = myWrap.validateCode(theOptions, convertedCode, convertedVs);
 			return convertValidationResult(result);
 		}
+
+    @Override
+    public Locale getLocale() {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public void setLocale(Locale locale) {
+      // TODO Auto-generated method stub
+      
+    }
 
 
 	}

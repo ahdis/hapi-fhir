@@ -47,6 +47,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -705,6 +706,18 @@ public class FhirInstanceValidator extends org.hl7.fhir.r4.hapi.validation.BaseV
 		public Map<String, byte[]> getBinaries() {
 			return null;
 		}
+
+    @Override
+    public Locale getLocale() {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public void setLocale(Locale locale) {
+      // TODO Auto-generated method stub
+      
+    }
 
 	}
 

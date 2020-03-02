@@ -50,6 +50,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -287,7 +288,19 @@ public class FhirInstanceValidator extends BaseValidatorBridge implements IValid
 
 
 	private static class WorkerContextWrapper implements IWorkerContext {
-		private final HapiWorkerContext myWrap;
+		@Override
+    public Locale getLocale() {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public void setLocale(Locale locale) {
+      // TODO Auto-generated method stub
+      
+    }
+
+    private final HapiWorkerContext myWrap;
 		private volatile List<org.hl7.fhir.r5.model.StructureDefinition> myAllStructures;
 		private LoadingCache<ResourceKey, Resource> myFetchResourceCache;
 		private org.hl7.fhir.r5.model.Parameters myExpansionProfile;

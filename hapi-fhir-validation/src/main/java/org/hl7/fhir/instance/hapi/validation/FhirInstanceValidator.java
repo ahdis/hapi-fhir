@@ -1,24 +1,26 @@
 package org.hl7.fhir.instance.hapi.validation;
 
-import ca.uhn.fhir.context.BaseRuntimeElementDefinition;
-import ca.uhn.fhir.context.ConfigurationException;
-import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.context.FhirVersionEnum;
-import ca.uhn.fhir.context.RuntimePrimitiveDatatypeDefinition;
-import ca.uhn.fhir.rest.api.Constants;
-import ca.uhn.fhir.rest.api.EncodingEnum;
-import ca.uhn.fhir.rest.server.exceptions.InternalErrorException;
-import ca.uhn.fhir.util.XmlUtil;
-import ca.uhn.fhir.validation.IInstanceValidatorModule;
-import ca.uhn.fhir.validation.IValidationContext;
-import com.github.benmanes.caffeine.cache.CacheLoader;
-import com.github.benmanes.caffeine.cache.Caffeine;
-import com.github.benmanes.caffeine.cache.LoadingCache;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.hl7.fhir.convertors.VersionConvertor_10_50.convertCoding;
+import static org.hl7.fhir.convertors.conv10_50.StructureDefinition10_50.convertStructureDefinition;
+import static org.hl7.fhir.convertors.conv10_50.ValueSet10_50.convertConceptSetComponent;
+import static org.hl7.fhir.convertors.conv10_50.ValueSet10_50.convertValueSet;
+import static org.hl7.fhir.convertors.conv10_50.ValueSet10_50.convertValueSetExpansionComponent;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -28,7 +30,6 @@ import org.hl7.fhir.converter.NullVersionConverterAdvisor50;
 import org.hl7.fhir.convertors.VersionConvertorAdvisor50;
 import org.hl7.fhir.convertors.VersionConvertor_10_50;
 import org.hl7.fhir.convertors.conv10_50.ValueSet10_50;
-import org.hl7.fhir.convertors.conv14_50.CodeSystem14_50;
 import org.hl7.fhir.dstu2.model.CodeableConcept;
 import org.hl7.fhir.dstu2.model.Coding;
 import org.hl7.fhir.dstu2.model.Questionnaire;
@@ -48,34 +49,35 @@ import org.hl7.fhir.r5.utils.INarrativeGenerator;
 import org.hl7.fhir.r5.utils.IResourceValidator;
 import org.hl7.fhir.r5.utils.IResourceValidator.BestPracticeWarningLevel;
 import org.hl7.fhir.r5.utils.IResourceValidator.IdStatus;
-import org.hl7.fhir.r5.validation.InstanceValidator;
 import org.hl7.fhir.utilities.TranslationServices;
 import org.hl7.fhir.utilities.validation.ValidationMessage;
 import org.hl7.fhir.utilities.validation.ValidationMessage.IssueSeverity;
 import org.hl7.fhir.utilities.validation.ValidationOptions;
+import org.hl7.fhir.validation.instance.InstanceValidator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
+import com.github.benmanes.caffeine.cache.CacheLoader;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.hl7.fhir.convertors.VersionConvertor_10_50.convertCoding;
-import static org.hl7.fhir.convertors.conv10_50.StructureDefinition10_50.convertStructureDefinition;
-import static org.hl7.fhir.convertors.conv10_50.ValueSet10_50.convertConceptSetComponent;
-import static org.hl7.fhir.convertors.conv10_50.ValueSet10_50.convertValueSet;
-import static org.hl7.fhir.convertors.conv10_50.ValueSet10_50.convertValueSetExpansionComponent;
+import ca.uhn.fhir.context.BaseRuntimeElementDefinition;
+import ca.uhn.fhir.context.ConfigurationException;
+import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.context.FhirVersionEnum;
+import ca.uhn.fhir.context.RuntimePrimitiveDatatypeDefinition;
+import ca.uhn.fhir.rest.api.Constants;
+import ca.uhn.fhir.rest.api.EncodingEnum;
+import ca.uhn.fhir.rest.server.exceptions.InternalErrorException;
+import ca.uhn.fhir.util.XmlUtil;
+import ca.uhn.fhir.validation.IInstanceValidatorModule;
+import ca.uhn.fhir.validation.IValidationContext;
 
 public class FhirInstanceValidator extends BaseValidatorBridge implements IInstanceValidatorModule {
 
@@ -936,6 +938,18 @@ public class FhirInstanceValidator extends BaseValidatorBridge implements IInsta
 			org.hl7.fhir.dstu2.utils.IWorkerContext.ValidationResult result = myWrap.validateCode(convertedCode, convertedVs);
 			return convertValidationResult(result);
 		}
+
+    @Override
+    public Locale getLocale() {
+      // TODO Auto-generated method stub
+      return null;
+    }
+
+    @Override
+    public void setLocale(Locale locale) {
+      // TODO Auto-generated method stub
+      
+    }
 
 	}
 
