@@ -31,6 +31,7 @@ import org.hl7.fhir.utilities.validation.ValidationOptions;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -407,5 +408,17 @@ public final class HapiWorkerContext implements IWorkerContext, ValueSetExpander
 	public Map<String, byte[]> getBinaries() {
 		return null;
 	}
+
+  @Override
+  public Locale getLocale() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  @Override
+  public void setLocale(Locale locale) {
+    // TODO Auto-generated method stub
+    
+  }
 
 }
