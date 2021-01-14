@@ -711,6 +711,16 @@ public class VersionSpecificWorkerContextWrapper extends I18nBase implements IWo
 
 		 return new VersionSpecificWorkerContextWrapper(new ValidationSupportContext(theValidationSupport), converter);
     }
+  @Override
+  public Set<String> getCodeSystemsUsed() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public String getSpecUrl() {
+    throw new UnsupportedOperationException();
+  }
+
 }
 
 
