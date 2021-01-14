@@ -480,4 +480,14 @@ public final class HapiWorkerContext extends I18nBase implements IWorkerContext 
 		return retVal;
 	}
 
+  @Override
+  public Set<String> getCodeSystemsUsed() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public String getSpecUrl() {
+    throw new UnsupportedOperationException();
+  }
+
 }
