@@ -32,6 +32,7 @@ import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r5.elementmodel.Element;
 import org.hl7.fhir.r5.elementmodel.JsonParser;
+import org.hl7.fhir.r5.model.CanonicalResource;
 import org.hl7.fhir.r5.utils.IResourceValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +40,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Locale;
 
 public class ValidatorResourceFetcher implements IResourceValidator.IValidatorResourceFetcher {
@@ -94,11 +96,6 @@ public class ValidatorResourceFetcher implements IResourceValidator.IValidatorRe
 	}
 
 	@Override
-	public boolean resolveURL(Object appContext, String path, String url) throws IOException, FHIRException {
-		return true;
-	}
-
-	@Override
 	public byte[] fetchRaw(String url) throws IOException {
 		return new byte[0];
 	}
@@ -107,5 +104,23 @@ public class ValidatorResourceFetcher implements IResourceValidator.IValidatorRe
 	public void setLocale(Locale locale) {
 		// ignore
 	}
+
+
+  @Override
+  public boolean resolveURL(Object appContext, String path, String url, String type) throws IOException, FHIRException {    // TODO Auto-generated method stub
+    return true;
+  }
+
+
+  @Override
+  public CanonicalResource fetchCanonicalResource(String url) throws URISyntaxException {
+    return null;
+  }
+
+
+  @Override
+  public boolean fetchesCanonicalResource(String url) {
+    return false;
+  }
 
 }
