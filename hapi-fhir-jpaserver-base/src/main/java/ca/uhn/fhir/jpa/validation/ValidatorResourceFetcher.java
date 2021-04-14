@@ -41,8 +41,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
+<<<<<<< HEAD
 import java.io.IOException;
 import java.net.MalformedURLException;
+=======
+
+import java.io.IOException;
+>>>>>>> fix comp error
 import java.net.URISyntaxException;
 import java.util.Locale;
 
@@ -97,12 +102,16 @@ public class ValidatorResourceFetcher implements IResourceValidator.IValidatorRe
 	}
 
 	@Override
+<<<<<<< HEAD
 	public boolean resolveURL(IResourceValidator iResourceValidator, Object o, String s, String s1, String s2) throws IOException, FHIRException {
 		return true;
 	}
 
 	@Override
 	public byte[] fetchRaw(IResourceValidator iResourceValidator, String s) throws MalformedURLException, IOException {
+=======
+	public byte[] fetchRaw(String url) {
+>>>>>>> fix comp error
 		throw new UnsupportedOperationException();
 	}
 
