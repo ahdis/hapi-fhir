@@ -2734,7 +2734,7 @@
 				<module>hapi-fhir-server</module>
 				<module>hapi-fhir-server-mdm</module>
 				<module>hapi-fhir-server-openapi</module>
-				<module>hapi-fhir-converter</module>
+<!--				<module>hapi-fhir-converter</module> -->
 				<module>hapi-fhir-validation</module>
 				<!--<module>hapi-fhir-narrativegenerator</module>-->
 			<module>hapi-fhir-structures-dstu2</module>
