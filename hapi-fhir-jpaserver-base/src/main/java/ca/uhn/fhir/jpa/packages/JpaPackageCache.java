@@ -457,6 +457,10 @@ public class JpaPackageCache extends BasePackageCacheManager implements IHapiPac
 	public IBaseResource loadPackageAssetByUrl(FhirVersionEnum theFhirVersion, String theCanonicalUrl) {
 
 		String canonicalUrl = theCanonicalUrl;
+		if (canonicalUrl==null) {
+		  return null;
+		}
+		
 
 		int versionSeparator = canonicalUrl.lastIndexOf('|');
 		Slice<NpmPackageVersionResourceEntity> slice;

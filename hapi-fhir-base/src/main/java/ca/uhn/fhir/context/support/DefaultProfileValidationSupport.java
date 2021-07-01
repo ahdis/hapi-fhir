@@ -179,6 +179,9 @@ public class DefaultProfileValidationSupport implements IValidationSupport {
 
 			// System can take the form "http://url|version"
 			String system = theSystem;
+			if (system==null) {
+			  return null;
+			}
 			if (system.contains("|")) {
 				String version = system.substring(system.indexOf('|') + 1);
 				if (version.matches("^[0-9.]+$")) {

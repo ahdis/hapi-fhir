@@ -21,6 +21,8 @@ import org.hl7.fhir.instance.model.api.IPrimitiveType;
 import org.hl7.fhir.r5.model.CanonicalType;
 import org.hl7.fhir.r5.model.CodeSystem;
 import org.hl7.fhir.utilities.validation.ValidationMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -46,6 +48,8 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
  */
 public class InMemoryTerminologyServerValidationSupport implements IValidationSupport {
 	private final FhirContext myCtx;
+
+	private static final Logger ourLog = LoggerFactory.getLogger(InMemoryTerminologyServerValidationSupport.class);
 
 	public InMemoryTerminologyServerValidationSupport(FhirContext theCtx) {
 		Validate.notNull(theCtx, "theCtx must not be null");
@@ -572,7 +576,9 @@ public class InMemoryTerminologyServerValidationSupport implements IValidationSu
 							 * enumerate a set of good codes for them is a nice compromise there.
 							 */
 							for (org.hl7.fhir.r5.model.ValueSet.ConceptSetComponent next : theComposeList) {
-								if (Objects.equals(next.getSystem(), theWantSystemUrlAndVersion)) {
+							  // for ../ch-emed/input/examples/medication/2-3-Beloczok.xml we have a 
+							  // <system value="http://unitsofmeasure.org"/> <code value="mg"/> and the codesystem is not provided here: heWantSystemUrlAndVersion=null 
+								if (Objects.equals(next.getSystem(), theWantSystemUrlAndVersion) || theWantSystemUrlAndVersion==null) {
 									Optional<org.hl7.fhir.r5.model.ValueSet.ConceptReferenceComponent> matchingEnumeratedConcept = next.getConcept().stream().filter(t -> Objects.equals(t.getCode(), theWantCode)).findFirst();
 									if (matchingEnumeratedConcept.isPresent()) {
 										CodeSystem.ConceptDefinitionComponent conceptDefinition = new CodeSystem.ConceptDefinitionComponent()
@@ -609,10 +615,17 @@ public class InMemoryTerminologyServerValidationSupport implements IValidationSu
 				if (vs != null) {
 					org.hl7.fhir.r5.model.ValueSet subExpansion = expandValueSetR5(theValidationSupportContext, vs, theCodeSystemLoader, theValueSetLoader, theWantSystemUrlAndVersion, theWantCode);
 					if (subExpansion == null) {
-						throw new ExpansionCouldNotBeCompletedInternallyException();
-					}
-					for (org.hl7.fhir.r5.model.ValueSet.ValueSetExpansionContainsComponent next : subExpansion.getExpansion().getContains()) {
-						nextCodeList.add(new FhirVersionIndependentConcept(next.getSystem(), next.getCode(), next.getDisplay(), next.getVersion()));
+					  // contains two valueset next to other values
+					  // https://fhir.ch/ig/ch-rad-order/ValueSet-ch-rad-order-caveat-condition.json.html
+					  // 2021-06-29 21:16:00.363 [http-nio-8080-exec-1] WARN  c.u.f.jpa.term.BaseTermReadSvcImpl [BaseTermReadSvcImpl.java:1468] ValueSet.url[http://fhir.ch/ig/ch-rad-order/ValueSet/ch-rad-order-caveat-type] is present in terminology tables but not ready for persistence-backed invocation of operation $validation-code. Will perform in-memory code validation. Current status: NOT_EXPANDED | The ValueSet is waiting to be picked up and pre-expanded by a scheduled task.
+					  // 2021-06-29 21:16:00.405 [http-nio-8080-exec-1] WARN  c.u.f.jpa.term.BaseTermReadSvcImpl [BaseTermReadSvcImpl.java:1468] ValueSet.url[http://fhir.ch/ig/ch-rad-order/ValueSet/ch-rad-order-caveat-condition] is present in terminology tables but not ready for persistence-backed invocation of operation $validation-code. Will perform in-memory code validation. Current status: NOT_EXPANDED | The ValueSet is waiting to be picked up and pre-expanded by a scheduled task.
+					  // log error instead of throwing an exception
+					  // throw new ExpansionCouldNotBeCompletedInternallyException();
+					  ourLog.error("Could not include expansion for ValueSet: "+nextValueSetInclude.getValueAsString());
+					} else {
+  					for (org.hl7.fhir.r5.model.ValueSet.ValueSetExpansionContainsComponent next : subExpansion.getExpansion().getContains()) {
+  						nextCodeList.add(new FhirVersionIndependentConcept(next.getSystem(), next.getCode(), next.getDisplay(), next.getVersion()));
+  					}
 					}
 				}
 			}
