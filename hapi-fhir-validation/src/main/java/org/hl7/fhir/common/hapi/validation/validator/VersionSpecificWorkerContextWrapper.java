@@ -255,7 +255,7 @@ public class VersionSpecificWorkerContextWrapper extends I18nBase implements IWo
 			String issueSeverity = theResult.getSeverityCode();
 			String message = theResult.getMessage();
 			if (isNotBlank(code)) {
-				retVal = new ValidationResult(new org.hl7.fhir.r5.model.CodeSystem.ConceptDefinitionComponent()
+				retVal = new ValidationResult(null, new org.hl7.fhir.r5.model.CodeSystem.ConceptDefinitionComponent()
 					.setCode(code)
 					.setDisplay(display));
 			} else if (isNotBlank(issueSeverity)) {
@@ -739,16 +739,6 @@ public class VersionSpecificWorkerContextWrapper extends I18nBase implements IWo
 
 		return new VersionSpecificWorkerContextWrapper(new ValidationSupportContext(theValidationSupport), converter);
 	}
-
-  @Override
-  public Set<String> getCodeSystemsUsed() {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public String getSpecUrl() {
-    throw new UnsupportedOperationException();
-  }
 
 }
 
