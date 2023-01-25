@@ -884,7 +884,7 @@
         <commons_io_version>2.11.0</commons_io_version>
         <commons_lang3_version>3.12.0</commons_lang3_version>
         <com_jamesmurty_utils_version>1.2</com_jamesmurty_utils_version>
-        <derby_version>10.14.2.0</derby_version>
+        <derby_version>10.16.1.1</derby_version>
         <!--<derby_version>10.15.1.3</derby_version>-->
         <error_prone_core_version>2.10.0</error_prone_core_version>
         <mockito_version>4.8.1</mockito_version>
